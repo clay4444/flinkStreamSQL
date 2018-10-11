@@ -29,16 +29,18 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 解析sql获得的对象结构
+ * 解析全部 sql 获得的对象结构
  * Date: 2018/6/25
  * Company: www.dtstack.com
  * @author xuchao
  */
 
-public class SqlTree {
+public class SqlTree {   // sql 获得的对象结构
 
+    // CreateFuncParser 解析创建函数后  的信息保存在这个list，包含创建的函数名、函数类型、class全类名
     private List<CreateFuncParser.SqlParserResult> functionList = Lists.newArrayList();
 
+    // createTableParser 解析创建源表后 的信息保存在这个map ，包含创建的源表名、属性名和类型、with补充信息
     private Map<String, CreateTableParser.SqlParserResult> preDealTableMap = Maps.newHashMap();
 
     private Map<String, TableInfo> tableInfoMap = Maps.newLinkedHashMap();
@@ -57,10 +59,14 @@ public class SqlTree {
         return execSqlList;
     }
 
+
+    //添加 CreateFuncParser 解析后的信息
     public void addFunc(CreateFuncParser.SqlParserResult func){
         functionList.add(func);
     }
 
+
+    //添加 createTableParser 解析后的信息
     public void addPreDealTableInfo(String tableName, CreateTableParser.SqlParserResult table){
         preDealTableMap.put(tableName, table);
     }

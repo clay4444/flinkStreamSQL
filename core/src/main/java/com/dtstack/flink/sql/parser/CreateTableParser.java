@@ -29,7 +29,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * 解析创建表结构sql
+ * 解析创建表结构的 sql 语句
  * Date: 2018/6/26
  * Company: www.dtstack.com
  * @author xuchao
@@ -37,6 +37,8 @@ import java.util.regex.Pattern;
 
 public class CreateTableParser implements IParser {
 
+    // regex 匹配
+    // create table xxx (...) with (....)
     private static final String PATTERN_STR = "(?i)create\\s+table\\s+(\\S+)\\s*\\((.+)\\)\\s*with\\s*\\((.+)\\)";
 
     private static final Pattern PATTERN = Pattern.compile(PATTERN_STR);
@@ -54,8 +56,12 @@ public class CreateTableParser implements IParser {
     public void parseSql(String sql, SqlTree sqlTree) {
         Matcher matcher = PATTERN.matcher(sql);
         if(matcher.find()){
+            // 表名
             String tableName = matcher.group(1).toUpperCase();
+            // 表的属性名 和 类型
             String fieldsInfoStr = matcher.group(2);
+
+            // with 后的属性
             String propsStr = matcher.group(3);
             Map<String, Object> props = parseProp(propsStr);
 
@@ -68,7 +74,15 @@ public class CreateTableParser implements IParser {
         }
     }
 
+
+    /**
+     * 解析 with 后面的属性，放到一个map中，
+     * @param propsStr
+     * @return
+     */
     private Map parseProp(String propsStr){
+
+        //按照 , 分割，
         String[] strs = propsStr.trim().split("'\\s*,");
         Map<String, Object> propMap = Maps.newHashMap();
         for(int i=0; i<strs.length; i++){

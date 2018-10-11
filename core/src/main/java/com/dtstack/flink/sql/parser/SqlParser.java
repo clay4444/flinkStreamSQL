@@ -41,8 +41,9 @@ public class SqlParser {
 
     private static final char SQL_DELIMITER = ';';
 
-    private static String LOCAL_SQL_PLUGIN_ROOT;
+    private static String LOCAL_SQL_PLUGIN_ROOT;   //本地plugin 打包插件  本地启动时，设置的
 
+    // 构建所有的解析器集合：创建自定义函数的parser，创建表的parser，插入数据的parser
     private static List<IParser> sqlParserList = Lists.newArrayList(CreateFuncParser.newInstance(),
             CreateTableParser.newInstance(), InsertSqlParser.newInstance());
 
@@ -51,7 +52,7 @@ public class SqlParser {
     }
 
     /**
-     * flink support sql syntax
+     * flink 支持的sql 语法
      * CREATE TABLE sls_stream() with ();
      * CREATE (TABLE|SCALA) FUNCTION fcnName WITH com.dtstack.com;
      * insert into tb1 select * from tb2;
@@ -59,20 +60,23 @@ public class SqlParser {
      */
     public static SqlTree parseSql(String sql) throws Exception {
 
-        if(StringUtils.isBlank(sql)){
+        if(StringUtils.isBlank(sql)){  // sql 非空
             throw new RuntimeException("sql is not null");
         }
 
-        if(LOCAL_SQL_PLUGIN_ROOT == null){
+        if(LOCAL_SQL_PLUGIN_ROOT == null){  // 插件打包的目录
             throw new RuntimeException("need to set local sql plugin root");
         }
 
         sql = sql.replaceAll("--.*", "")
                 .replaceAll("\r\n", " ")
                 .replaceAll("\n", " ")
-                .replace("\t", " ").trim();
+                .replace("\t", " ").trim();  // 格式化
 
+        //  根据  ; 分割 sql  获取sql 集合
         List<String> sqlArr = DtStringUtil.splitIgnoreQuota(sql, SQL_DELIMITER);
+
+        //构建sql 语法树
         SqlTree sqlTree = new SqlTree();
 
         for(String childSql : sqlArr){
@@ -80,16 +84,17 @@ public class SqlParser {
                 continue;
             }
             boolean result = false;
+            //验证应该使用哪种parser 解析该sql
             for(IParser sqlParser : sqlParserList){
                 if(!sqlParser.verify(childSql)){
-                    continue;
+                    continue;  // 直接跳过
                 }
 
                 sqlParser.parseSql(childSql, sqlTree);
                 result = true;
             }
 
-            if(!result){
+            if(!result){  // result 为false，说明 没有对应的解析器，直接抛异常
                 throw new RuntimeException(String.format("%s:Syntax does not support,the format of SQL like insert into tb1 select * from tb2.", childSql));
             }
         }

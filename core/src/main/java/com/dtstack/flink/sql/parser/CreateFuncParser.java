@@ -32,6 +32,7 @@ import java.util.regex.Pattern;
 
 public class CreateFuncParser implements IParser {
 
+    // create table function (...) with (...)
     private static final String funcPatternStr = "(?i)\\s*create\\s+(scala|table)\\s+function\\s+(\\S+)\\s+WITH\\s+(\\S+)";
 
     private static final Pattern funcPattern = Pattern.compile(funcPatternStr);
@@ -45,9 +46,9 @@ public class CreateFuncParser implements IParser {
     public void parseSql(String sql, SqlTree sqlTree) {
         Matcher matcher = funcPattern.matcher(sql);
         if(matcher.find()){
-            String type = matcher.group(1);
-            String funcName = matcher.group(2);
-            String className = matcher.group(3);
+            String type = matcher.group(1);  // 类型：  scala / table
+            String funcName = matcher.group(2); //函数名
+            String className = matcher.group(3);   // 类名，
             SqlParserResult result = new SqlParserResult();
             result.setType(type);
             result.setName(funcName);

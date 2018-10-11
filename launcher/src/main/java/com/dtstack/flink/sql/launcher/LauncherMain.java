@@ -49,13 +49,22 @@ public class LauncherMain {
     }
 
     public static void main(String[] args) throws Exception {
+
+        //解析参数
         LauncherOptionParser optionParser = new LauncherOptionParser(args);
+
+        //封装启动参数
         LauncherOptions launcherOptions = optionParser.getLauncherOptions();
-        String mode = launcherOptions.getMode();
-        List<String> argList = optionParser.getProgramExeArgList();
+
+        String mode = launcherOptions.getMode();  // 启动模式
+
+        // -sql ... -name ... -addjar ...
+        // 原因是apache.commons.cli包的DefaultParser 需要
+        List<String> argList = optionParser.getProgramExeArgList();  // 排除掉了 flinkconf 和  yarnconf  两个配置，其余封装为一个list
+
         if(mode.equals(ClusterMode.local.name())) {
             String[] localArgs = argList.toArray(new String[argList.size()]);
-            Main.main(localArgs);
+            Main.main(localArgs);       //具体入口
         } else {
             ClusterClient clusterClient = ClusterClientFactory.createClusterClient(launcherOptions);
             String pluginRoot = launcherOptions.getLocalSqlPluginPath();

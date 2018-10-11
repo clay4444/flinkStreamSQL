@@ -1,0 +1,59 @@
+CREATE TABLE orderr(
+    order_id Int,
+    order_pay Int,
+    order_desc String,
+    user_id Int
+ )WITH(
+    type ='kafka11',
+    bootstrapServers ='localhost:9092',
+    zookeeperQuorum ='localhost:2181',
+    offsetReset ='latest',
+    topic ='order',
+    parallelism ='1'
+ );
+
+create table userr(
+    user_id Int,
+    user_name String,
+    user_age Int
+    PRIMARY KEY(user_id),
+    PERIOD FOR SYSTEM_TIME
+ )WITH(
+    type='mysql',
+    url='jdbc:mysql://localhost:3306/test?charset=utf8',
+    userName='root',
+    password='tiger',
+    tableName='user',
+    parallelism ='1',
+ );
+
+
+CREATE TABLE MyResult(
+    user_id Int,
+    user_name String,
+    order_id Int,
+    order_pay Int
+ )WITH(
+    type ='mysql',
+    url ='jdbc:mysql://localhost:3306/test?charset=utf8',
+    userName ='root',
+    password ='tiger',
+    tableName ='result',
+    parallelism ='1'
+ );
+
+insert
+into
+    MyResult
+    select
+        a.user_id,
+        b.user_name,
+        a.order_id,
+        a.order_pay
+    from
+        orderr a
+    join
+        userr b
+            on a.user_id=b.user_id
+
+

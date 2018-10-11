@@ -71,6 +71,8 @@ public class MyLocalStreamEnvironment extends StreamExecutionEnvironment {
      * @param config The configuration used to configure the local executor.
      */
     public MyLocalStreamEnvironment(Configuration config) {
+
+        // 如果可以显示的实例化LocalEnvironment  或者 RemoteEnvironment 返回true
         if (!ExecutionEnvironment.areExplicitEnvironmentsAllowed()) {
             throw new InvalidProgramException(
                     "The LocalStreamEnvironment cannot be used when submitting a program through a client, " +
@@ -86,7 +88,7 @@ public class MyLocalStreamEnvironment extends StreamExecutionEnvironment {
      *
      * @param jobName
      *            name of the job
-     * @return The result of the job execution, containing elapsed time and accumulators.
+     * @return The result of the job execution, 包含经过的时间和累加器
      */
     @Override
     public JobExecutionResult execute(String jobName) throws Exception {
@@ -95,15 +97,15 @@ public class MyLocalStreamEnvironment extends StreamExecutionEnvironment {
         streamGraph.setJobName(jobName);
 
         JobGraph jobGraph = streamGraph.getJobGraph();
-        jobGraph.setClasspaths(classpaths);
+        jobGraph.setClasspaths(classpaths); // classpaths
 
         Configuration configuration = new Configuration();
         configuration.addAll(jobGraph.getJobConfiguration());
 
-        configuration.setLong(TaskManagerOptions.MANAGED_MEMORY_SIZE, -1L);
-        configuration.setInteger(ConfigConstants.TASK_MANAGER_NUM_TASK_SLOTS, jobGraph.getMaximumParallelism());
+        configuration.setLong(TaskManagerOptions.MANAGED_MEMORY_SIZE, -1L);  //taskmanager 内存大小 -1 ?
+        configuration.setInteger(ConfigConstants.TASK_MANAGER_NUM_TASK_SLOTS, jobGraph.getMaximumParallelism()); //槽数，取最大并行度
 
-        // add (and override) the settings with what the user defined
+        // 使用用户自定义的配置，可能覆盖之前设置的，
         configuration.addAll(this.conf);
 
         if (LOG.isInfoEnabled()) {

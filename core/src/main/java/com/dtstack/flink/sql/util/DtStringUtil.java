@@ -43,7 +43,7 @@ public class DtStringUtil {
     private static final Pattern NO_VERSION_PATTERN = Pattern.compile("([a-zA-Z]+).*");
 
     /**
-     * Split the specified string delimiter --- ignored quotes delimiter
+     * 按照分割sql --- 忽略引号
      * @param str
      * @param delimiter
      * @return

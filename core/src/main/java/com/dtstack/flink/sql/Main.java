@@ -109,7 +109,10 @@ public class Main {
         options.addOption("allowNonRestoredState", true, "Flag indicating whether non restored state is allowed if the savepoint");
 
         CommandLineParser parser = new DefaultParser();
-        CommandLine cl = parser.parse(options, args);
+        CommandLine cl = parser.parse(options, args);  // 解析具体参数到options 中，
+
+
+        //具体执行参数，排除掉了 flinkconf 和  yarnconf  两个配置
         String sql = cl.getOptionValue("sql");
         String name = cl.getOptionValue("name");
         String addJarListStr = cl.getOptionValue("addjar");
@@ -118,36 +121,52 @@ public class Main {
         String deployMode = cl.getOptionValue("mode");
         String confProp = cl.getOptionValue("confProp");
 
+        // sql，name，localSqlPluginPath(本地插件打包目录)  三个不能为空
         Preconditions.checkNotNull(sql, "parameters of sql is required");
         Preconditions.checkNotNull(name, "parameters of name is required");
         Preconditions.checkNotNull(localSqlPluginPath, "parameters of localSqlPluginPath is required");
 
+        // 具体执行的sql语句
         sql = URLDecoder.decode(sql, Charsets.UTF_8.name());
+
+        // 本地plugin插件
         SqlParser.setLocalSqlPluginRoot(localSqlPluginPath);
 
+        // UDF jar 包，读到list中，
         List<String> addJarFileList = Lists.newArrayList();
         if(!Strings.isNullOrEmpty(addJarListStr)){
             addJarListStr = URLDecoder.decode(addJarListStr, Charsets.UTF_8.name());
             addJarFileList = objMapper.readValue(addJarListStr, List.class);
         }
 
+        //TODO 使用当前线程的类加载器加载，涉及到 jvm委派链  问题
         ClassLoader threadClassLoader = Thread.currentThread().getContextClassLoader();
         DtClassLoader dtClassLoader = new DtClassLoader(new URL[]{}, threadClassLoader);
         Thread.currentThread().setContextClassLoader(dtClassLoader);
 
         URLClassLoader parentClassloader;
-        if(!ClusterMode.local.name().equals(deployMode)){
+
+        if(!ClusterMode.local.name().equals(deployMode)){  // 本地模式
             parentClassloader = (URLClassLoader) threadClassLoader.getParent();
         }else{
             parentClassloader = dtClassLoader;
         }
 
+        // 配置信息
         confProp = URLDecoder.decode(confProp, Charsets.UTF_8.toString());
+
+        // 封装 flink app 启动需要的配置信息  {\"time.characteristic\":\"EventTime\",\"sql.checkpoint.interval\":10000}
         Properties confProperties = PluginUtil.jsonStrToObject(confProp, Properties.class);
+
+        //返回本地env，其中设置了重启策略，checkpoint，并行度，event time 等各种参数，
         StreamExecutionEnvironment env = getStreamExeEnv(confProperties, deployMode);
+
+        // 获取table env
         StreamTableEnvironment tableEnv = StreamTableEnvironment.getTableEnvironment(env);
 
         List<URL> jarURList = Lists.newArrayList();
+
+        //
         SqlTree sqlTree = SqlParser.parseSql(sql);
 
         //Get External jar to load
@@ -286,25 +305,30 @@ public class Main {
         addEnvClassPath(env, classPathSet);
     }
 
+    //
     private static StreamExecutionEnvironment getStreamExeEnv(Properties confProperties, String deployMode) throws IOException {
+        //
         StreamExecutionEnvironment env = !ClusterMode.local.name().equals(deployMode) ?
                 StreamExecutionEnvironment.getExecutionEnvironment() :
-                new MyLocalStreamEnvironment();
+                new MyLocalStreamEnvironment();  // local 模拟下，
 
+        //仅能设置sql 的并行度，
         env.setParallelism(FlinkUtil.getEnvParallelism(confProperties));
 
+        // sql 环境 最大并行度
         if(FlinkUtil.getMaxEnvParallelism(confProperties) > 0){
             env.setMaxParallelism(FlinkUtil.getMaxEnvParallelism(confProperties));
         }
 
+        // sql.buffer 超时时间
         if(FlinkUtil.getBufferTimeoutMillis(confProperties) > 0){
             env.setBufferTimeout(FlinkUtil.getBufferTimeoutMillis(confProperties));
         }
 
         env.setRestartStrategy(RestartStrategies.failureRateRestart(
-                failureRate,
-                Time.of(failureInterval, TimeUnit.MINUTES),
-                Time.of(delayInterval, TimeUnit.SECONDS)
+                failureRate, //给定间隔的最大重试次数
+                Time.of(failureInterval, TimeUnit.MINUTES), // 时间间隔
+                Time.of(delayInterval, TimeUnit.SECONDS)  //每次重启之间，要延迟的时间，
         ));
 
         FlinkUtil.setStreamTimeCharacteristic(env, confProperties);

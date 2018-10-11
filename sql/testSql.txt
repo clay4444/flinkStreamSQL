@@ -1,0 +1,55 @@
+CREATE TABLE MyTable(
+    channel STRING,
+    pv INT,
+    xctime bigint,
+    CHARACTER_LENGTH(channel) as timeLeng,
+    WATERMARK FOR xctime AS withOffset(xctime,1000)
+ )WITH(
+    type='kafka11',
+    bootstrapServers ='localhost:9092',
+    zookeeperQuorum ='localhost:2181',
+    offsetReset ='latest',
+    topic='nbTest1'
+ );
+CREATE TABLE MyResult(
+    channel STRING,
+    pv INT,
+    xccount INT,
+    xcage INT
+ )WITH(
+    type='mysql',
+    url='jdbc:mysql://localhost:3306/test?charset=utf8',
+    userName='root',
+    password='tiger',
+    tableName='pv'
+ );
+
+create table sideTable(
+    channel String,
+    xccount int,
+    xcage int,
+    PRIMARY KEY(channel),
+    PERIOD FOR SYSTEM_TIME
+ )WITH(
+    type='mysql',
+    url='jdbc:mysql://localhost:3306/test?charset=utf8',
+    userName='root',
+    password='tiger',
+    tableName='sidetest'
+ );
+
+insert
+into
+    MyResult
+    select
+        a.channel,
+        a.pv,
+        b.xccount,
+        b.xcage
+    from
+        MyTable a
+    join
+        sideTable b
+            on a.channel=b.channel
+    where
+        b.channel = 'xc';

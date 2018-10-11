@@ -45,6 +45,7 @@ import static org.apache.calcite.sql.SqlKind.IDENTIFIER;
 
 public class InsertSqlParser implements IParser {
 
+    // insert 开头
     @Override
     public boolean verify(String sql) {
         return StringUtils.isNotBlank(sql) && sql.trim().toLowerCase().startsWith("insert");
@@ -55,17 +56,23 @@ public class InsertSqlParser implements IParser {
         return parser;
     }
 
+    //解析sql
     @Override
     public void parseSql(String sql, SqlTree sqlTree) {
+
+        // calcite 提供的解析 insert table select * from startTable join side table 的解析器，
         SqlParser sqlParser = SqlParser.create(sql);
+        // SqlNode：链表，
         SqlNode sqlNode = null;
         try {
-            sqlNode = sqlParser.parseStmt();
+            sqlNode = sqlParser.parseStmt();  // 解析sql，获取sqlNode ？
         } catch (SqlParseException e) {
             throw new RuntimeException("", e);
         }
 
+        // 包含原始表，结果表，和执行sql
         SqlParseResult sqlParseResult = new SqlParseResult();
+
         parseNode(sqlNode, sqlParseResult);
         sqlParseResult.setExecSql(sqlNode.toString());
         sqlTree.addExecSql(sqlParseResult);
@@ -74,7 +81,7 @@ public class InsertSqlParser implements IParser {
     private static void parseNode(SqlNode sqlNode, SqlParseResult sqlParseResult){
         SqlKind sqlKind = sqlNode.getKind();
         switch (sqlKind){
-            case INSERT:
+            case INSERT: // insert 类型的sql，
                 SqlNode sqlTarget = ((SqlInsert)sqlNode).getTargetTable();
                 SqlNode sqlSource = ((SqlInsert)sqlNode).getSource();
                 sqlParseResult.addTargetTable(sqlTarget.toString());
