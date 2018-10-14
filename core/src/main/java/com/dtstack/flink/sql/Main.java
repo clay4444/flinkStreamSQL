@@ -166,10 +166,10 @@ public class Main {
 
         List<URL> jarURList = Lists.newArrayList();
 
-        //
+        // 获取 sql 语法 树，
         SqlTree sqlTree = SqlParser.parseSql(sql);
 
-        //Get External jar to load
+        //额外jar包，自定义 udf 等
         for(String addJarPath : addJarFileList){
             File tmpFile = new File(addJarPath);
             jarURList.add(tmpFile.toURI().toURL());
@@ -180,9 +180,11 @@ public class Main {
 
         //register udf
         registerUDF(sqlTree, jarURList, parentClassloader, tableEnv);
+
         //register table schema
         registerTable(sqlTree, env, tableEnv, localSqlPluginPath, remoteSqlPluginPath, sideTableMap, registerTableCache);
 
+        //
         SideSqlExec sideSqlExec = new SideSqlExec();
         sideSqlExec.setLocalSqlPluginPath(localSqlPluginPath);
 
@@ -235,6 +237,13 @@ public class Main {
         }
     }
 
+    /**
+     * 注册  udf
+     * @param sqlTree     sql 语法数
+     * @param jarURList   jar 包
+     * @param parentClassloader
+     * @param tableEnv
+     */
     private static void registerUDF(SqlTree sqlTree, List<URL> jarURList, URLClassLoader parentClassloader,
                                     StreamTableEnvironment tableEnv)
             throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
@@ -253,27 +262,53 @@ public class Main {
     }
 
 
+    /**
+     * 注册 Table
+     * @param sqlTree               sql 语法树，
+     * @param env                   env
+     * @param tableEnv              tableEnv
+     * @param localSqlPluginPath    本地 sql 环境变量
+     * @param remoteSqlPluginPath
+     * @param sideTableMap
+     * @param registerTableCache
+     * @throws Exception
+     */
     private static void registerTable(SqlTree sqlTree, StreamExecutionEnvironment env, StreamTableEnvironment tableEnv,
                                       String localSqlPluginPath, String remoteSqlPluginPath,
                                       Map<String, SideTableInfo> sideTableMap, Map<String, Table> registerTableCache) throws Exception {
         Set<URL> classPathSet = Sets.newHashSet();
         WaterMarkerAssigner waterMarkerAssigner = new WaterMarkerAssigner();
+
+        // 遍历所有的Table
         for (TableInfo tableInfo : sqlTree.getTableInfoMap().values()) {
 
             if (tableInfo instanceof SourceTableInfo) {
+                // Source Table 类型
 
                 SourceTableInfo sourceTableInfo = (SourceTableInfo) tableInfo;
+
+                // 获取Table 环境，例如 kafka，就是把一个kafka stream transform 成一个 Kafka Table
                 Table table = StreamSourceFactory.getStreamSource(sourceTableInfo, env, tableEnv, localSqlPluginPath);
+
+                // MYTABLE_adapt   Table； 这里注册成一张 adapt 的表名是因为后面的 adaptSql 需要去查询它
                 tableEnv.registerTable(sourceTableInfo.getAdaptName(), table);
+
                 //Note --- parameter conversion function can not be used inside a function of the type of polymerization
                 //Create table in which the function is arranged only need adaptation sql
+                //参数转换函数不能在聚合类型的函数内使用， 去掉watermark属性，其他属性直接拼成一条从源表查询的sql
+                // select CHANNEL,PV,XCTIME,CHARACTER_LENGTH(CHANNEL) AS TIMELENG from MYTABLE_adapt
+                // 加这一步的步骤，是要把 虚拟属性加上；
                 String adaptSql = sourceTableInfo.getAdaptSelectSql();
                 Table adaptTable = adaptSql == null ? table : tableEnv.sqlQuery(adaptSql);
 
+                // Table column type info
                 RowTypeInfo typeInfo = new RowTypeInfo(adaptTable.getSchema().getTypes(), adaptTable.getSchema().getColumnNames());
+
+                // transform into datastream 转化成流的原因是 需要 handle with watermark
                 DataStream adaptStream = tableEnv.toAppendStream(adaptTable, typeInfo);
                 String fields = String.join(",", typeInfo.getFieldNames());
 
+                //handle with watermark
                 if(waterMarkerAssigner.checkNeedAssignWaterMarker(sourceTableInfo)){
                     adaptStream = waterMarkerAssigner.assignWaterMarker(adaptStream, typeInfo, sourceTableInfo.getEventTimeField(), sourceTableInfo.getMaxOutOrderness());
                     fields += ",ROWTIME.ROWTIME";
@@ -281,17 +316,26 @@ public class Main {
                     fields += ",PROCTIME.PROCTIME";
                 }
 
+                // 再转换成真正的表 （ 添加了watermark 的表 ）
                 Table regTable = tableEnv.fromDataStream(adaptStream, fields);
+
+                // 注册真正的表
                 tableEnv.registerTable(tableInfo.getName(), regTable);
+
+                // Table 缓存
                 registerTableCache.put(tableInfo.getName(), regTable);
+
+                // url 集合
                 classPathSet.add(PluginUtil.getRemoteJarFilePath(tableInfo.getType(), SourceTableInfo.SOURCE_SUFFIX, remoteSqlPluginPath));
             } else if (tableInfo instanceof TargetTableInfo) {
+                // Target Table 类型
 
                 TableSink tableSink = StreamSinkFactory.getTableSink((TargetTableInfo) tableInfo, localSqlPluginPath);
                 TypeInformation[] flinkTypes = FlinkUtil.transformTypes(tableInfo.getFieldClasses());
                 tableEnv.registerTableSink(tableInfo.getName(), tableInfo.getFields(), flinkTypes, tableSink);
                 classPathSet.add( PluginUtil.getRemoteJarFilePath(tableInfo.getType(), TargetTableInfo.TARGET_SUFFIX, remoteSqlPluginPath));
             } else if(tableInfo instanceof SideTableInfo){
+                // 维表
 
                 String sideOperator = ECacheType.ALL.name().equals(((SideTableInfo) tableInfo).getCacheType()) ? "all" : "async";
                 sideTableMap.put(tableInfo.getName(), (SideTableInfo) tableInfo);

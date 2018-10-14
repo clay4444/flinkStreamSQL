@@ -51,6 +51,11 @@ public abstract class AbsSourceParser extends AbsTableParser {
         keyHandlerMap.put(WATERMARK_KEY, AbsSourceParser::dealWaterMark);
     }
 
+    /**
+     * 处理虚拟属性
+     * CHARACTER_LENGTH(channel) as timeLeng,
+     * <timeLeng,CHARACTER_LENGTH(channel)></>
+     */
     static void dealVirtualField(Matcher matcher, TableInfo tableInfo){
         SourceTableInfo sourceTableInfo = (SourceTableInfo) tableInfo;
         String fieldName = matcher.group(2);
@@ -58,6 +63,9 @@ public abstract class AbsSourceParser extends AbsTableParser {
         sourceTableInfo.addVirtualField(fieldName, expression);
     }
 
+    /**
+     * 处理 watermark 属性，
+     */
     static void dealWaterMark(Matcher matcher, TableInfo tableInfo){
         SourceTableInfo sourceTableInfo = (SourceTableInfo) tableInfo;
         String eventTimeField = matcher.group(1);

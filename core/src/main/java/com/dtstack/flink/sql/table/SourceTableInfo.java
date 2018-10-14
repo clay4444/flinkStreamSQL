@@ -79,6 +79,10 @@ public abstract class SourceTableInfo extends TableInfo {
         virtualFields.put(fieldName, expression);
     }
 
+    /**
+     * TODO
+     * @return
+     */
     public String getAdaptSelectSql(){
         String fields = String.join(",", getFields());
         String virtualFieldsStr = "";
@@ -95,6 +99,7 @@ public abstract class SourceTableInfo extends TableInfo {
             fields += "," + virtualFieldsStr.substring(0, virtualFieldsStr.lastIndexOf(","));
         }
 
+        // select CHANNEL,PV,XCTIME,CHARACTER_LENGTH(CHANNEL) AS TIMELENG from MYTABLE_adapt
         return String.format("select %s from %s", fields, getAdaptName());
     }
 

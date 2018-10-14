@@ -37,14 +37,26 @@ public class StreamSideFactory {
 
     private static final String CURR_TYPE = "side";
 
+    /**
+     * @param pluginType   类型  mysql  kafka
+     * @param sqlRootDir   插件地址
+     * @param cacheType    缓存类型
+     * @return
+     * @throws Exception
+     */
     public static AbsTableParser getSqlParser(String pluginType, String sqlRootDir, String cacheType) throws Exception {
 
+        // 如果all 就全部获取，否则，异步查询，
         String sideOperator = ECacheType.ALL.name().equals(cacheType) ? "all" : "async";
+
+        //
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         String pluginJarPath = PluginUtil.getSideJarFileDirPath(pluginType, sideOperator, "side", sqlRootDir);
 
         DtClassLoader dtClassLoader = (DtClassLoader) classLoader;
         PluginUtil.addPluginJar(pluginJarPath, dtClassLoader);
+
+        // com.dtstack.flink.sql.side.mysql.table.MysqlSideParser
         String className = PluginUtil.getSqlParserClassName(pluginType, CURR_TYPE);
 
         Class<?> sideParser = dtClassLoader.loadClass(className);

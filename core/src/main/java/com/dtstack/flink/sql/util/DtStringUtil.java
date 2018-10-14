@@ -142,6 +142,11 @@ public class DtStringUtil {
         return result.toString();
     }
 
+    /**
+     *  获取engine 类型，去掉版本号，  kafka09、 kafka10、kafka11 => kafka
+     * @param engineType
+     * @return
+     */
     public static String getPluginTypeWithoutVersion(String engineType){
 
         Matcher matcher = NO_VERSION_PATTERN.matcher(engineType);

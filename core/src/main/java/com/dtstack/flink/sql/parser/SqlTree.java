@@ -43,8 +43,13 @@ public class SqlTree {   // sql 获得的对象结构
     // createTableParser 解析创建源表后 的信息保存在这个map ，包含创建的源表名、属性名和类型、with补充信息
     private Map<String, CreateTableParser.SqlParserResult> preDealTableMap = Maps.newHashMap();
 
+    /**
+     * <TableName, TableInfo>  前面三种固定的 parser 解析完之后，后添加的，
+     * TableInfo 中封装了表名，表属性，表类型，Class，主键，等
+     */
     private Map<String, TableInfo> tableInfoMap = Maps.newLinkedHashMap();
 
+    // insertTableParser 解析用户执行sql后 的信息保存在这个list，包含源表名、目标表名、用户原始sql
     private List<InsertSqlParser.SqlParseResult> execSqlList = Lists.newArrayList();
 
     public List<CreateFuncParser.SqlParserResult> getFunctionList() {
@@ -71,6 +76,7 @@ public class SqlTree {   // sql 获得的对象结构
         preDealTableMap.put(tableName, table);
     }
 
+    //添加 insertTableParser 解析后的信息
     public void addExecSql(InsertSqlParser.SqlParseResult execSql){
         execSqlList.add(execSql);
     }

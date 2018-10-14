@@ -53,6 +53,8 @@ public class StreamSinkFactory {
         String pluginJarPath = PluginUtil.getJarFileDirPath(String.format(DIR_NAME_FORMAT, pluginType), sqlRootDir);
 
         PluginUtil.addPluginJar(pluginJarPath, dtClassLoader);
+
+        // com.dtstack.flink.sql.sink.mysql.table.MysqlSinkParser
         String className = PluginUtil.getSqlParserClassName(pluginType, CURR_TYPE);
         Class<?> targetParser = dtClassLoader.loadClass(className);
 
@@ -63,6 +65,10 @@ public class StreamSinkFactory {
         return targetParser.asSubclass(AbsTableParser.class).newInstance();
     }
 
+    /**
+     * 获取 TableSink
+     * @throws Exception
+     */
     public static TableSink getTableSink(TargetTableInfo targetTableInfo, String localSqlRootDir) throws Exception {
 
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
@@ -72,7 +78,9 @@ public class StreamSinkFactory {
 
         DtClassLoader dtClassLoader = (DtClassLoader) classLoader;
 
-        String pluginType = targetTableInfo.getType();
+        String pluginType = targetTableInfo.getType();  // mysql
+
+        //
         String pluginJarDirPath = PluginUtil.getJarFileDirPath(String.format(DIR_NAME_FORMAT, pluginType), localSqlRootDir);
 
         PluginUtil.addPluginJar(pluginJarDirPath, dtClassLoader);

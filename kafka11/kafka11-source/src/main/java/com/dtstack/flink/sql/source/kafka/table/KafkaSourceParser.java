@@ -35,6 +35,9 @@ import java.util.Map;
 
 public class KafkaSourceParser extends AbsSourceParser {
 
+
+    // 获取 Table 信息
+
     @Override
     public TableInfo getTableInfo(String tableName, String fieldsInfo, Map<String, Object> props) {
 

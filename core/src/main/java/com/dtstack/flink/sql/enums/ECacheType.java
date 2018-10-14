@@ -26,6 +26,10 @@ package com.dtstack.flink.sql.enums;
  * Company: www.dtstack.com
  * @author xuchao
  */
+
+/**
+ * 缓存方式：
+ */
 public enum ECacheType {
     NONE, LRU, ALL;
 

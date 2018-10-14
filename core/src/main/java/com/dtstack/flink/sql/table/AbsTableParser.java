@@ -48,8 +48,8 @@ public abstract class AbsTableParser {
     public static Map<String, ITableFieldDealHandler> keyHandlerMap = Maps.newHashMap();
 
     static {
-        keyPatternMap.put(PRIMARY_KEY, primaryKeyPattern);
-        keyHandlerMap.put(PRIMARY_KEY, AbsTableParser::dealPrimaryKey);
+        keyPatternMap.put(PRIMARY_KEY, primaryKeyPattern);  // <primaryKey,PRIMARY KEY(channel)>
+        keyHandlerMap.put(PRIMARY_KEY, AbsTableParser::dealPrimaryKey);  // <primaryKey,>
     }
 
     protected boolean fieldNameNeedsUpperCase() {
@@ -58,6 +58,13 @@ public abstract class AbsTableParser {
 
     public abstract TableInfo getTableInfo(String tableName, String fieldsInfo, Map<String, Object> props);
 
+
+    /**
+     * 判断 fieldRow 字段是否是主键，watermark，虚拟属性（函数变化产生的）
+     * @param fieldRow
+     * @param tableInfo
+     * @return
+     */
     public boolean dealKeyPattern(String fieldRow, TableInfo tableInfo){
         for(Map.Entry<String, Pattern> keyPattern : keyPatternMap.entrySet()){
             Pattern pattern = keyPattern.getValue();
@@ -69,7 +76,7 @@ public abstract class AbsTableParser {
                     throw new RuntimeException("parse field [" + fieldRow + "] error.");
                 }
 
-                handler.dealPrimaryKey(matcher, tableInfo);
+                handler.dealPrimaryKey(matcher, tableInfo);  // 在Table Info 中设置主键
                 return true;
             }
         }
@@ -77,6 +84,11 @@ public abstract class AbsTableParser {
         return false;
     }
 
+    /**
+     * 解析 field 属性信息 到 tableInfo 中；
+     * @param fieldsInfo
+     * @param tableInfo
+     */
     public void parseFieldsInfo(String fieldsInfo, TableInfo tableInfo){
 
         String[] fieldRows = DtStringUtil.splitIgnoreQuotaBrackets(fieldsInfo, ",");
@@ -88,7 +100,7 @@ public abstract class AbsTableParser {
 
             boolean isMatcherKey = dealKeyPattern(fieldRow, tableInfo);
 
-            if(isMatcherKey){
+            if(isMatcherKey){  //跳过主键
                 continue;
             }
 
@@ -112,8 +124,13 @@ public abstract class AbsTableParser {
         tableInfo.finish();
     }
 
+    /**
+     * 设置主键；
+     * @param matcher
+     * @param tableInfo
+     */
     public static void dealPrimaryKey(Matcher matcher, TableInfo tableInfo){
-        String primaryFields = matcher.group(1);
+        String primaryFields = matcher.group(1);   //主键类型
         String[] splitArry = primaryFields.split(",");
         List<String> primaryKes = Lists.newArrayList(splitArry);
         tableInfo.setPrimaryKeys(primaryKes);

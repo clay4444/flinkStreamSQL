@@ -99,23 +99,29 @@ public class SqlParser {
             }
         }
 
-        //解析exec-sql
         if(sqlTree.getExecSqlList().size() == 0){
             throw new RuntimeException("sql no executable statement");
         }
 
+        //解析具体  insertTableParser 解析后的信息，保存 TableInfo 到sql 语法树中，
         for(InsertSqlParser.SqlParseResult result : sqlTree.getExecSqlList()){
-            List<String> sourceTableList = result.getSourceTableList();
-            List<String> targetTableList = result.getTargetTableList();
 
+            // 源表和目标表
+            List<String> sourceTableList = result.getSourceTableList(); // 因为存在join， 所以原表是两个
+            List<String> targetTableList = result.getTargetTableList();  // sink 是一个，到 mysql
+
+            //从注册的源表中找到用户sql中解析出来的表，
             for(String tableName : sourceTableList){
                 CreateTableParser.SqlParserResult createTableResult = sqlTree.getPreDealTableMap().get(tableName);
                 if(createTableResult == null){
                     throw new RuntimeException("can't find table " + tableName);
                 }
 
+                // 封装  TableInfo 类
                 TableInfo tableInfo = TableInfoParserFactory.parseWithTableType(ETableType.SOURCE.getType(),
                         createTableResult, LOCAL_SQL_PLUGIN_ROOT);
+
+                //添加到sql 语法树中；
                 sqlTree.addTableInfo(tableName, tableInfo);
             }
 

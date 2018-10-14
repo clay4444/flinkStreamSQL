@@ -48,6 +48,7 @@ public class WaterMarkerAssigner {
         return true;
     }
 
+    // 为流 分配 watermark
     public DataStream assignWaterMarker(DataStream<Row> dataStream, RowTypeInfo typeInfo, String eventTimeFieldName, int maxOutOfOrderness){
 
         String[] fieldNames = typeInfo.getFieldNames();
@@ -64,9 +65,11 @@ public class WaterMarkerAssigner {
             }
         }
 
+        // 分配的 watermark 属性在属性中要能找到
         Preconditions.checkState(pos != -1, "can not find specified eventTime field:" +
                 eventTimeFieldName + " in defined fields.");
 
+        // 获取watermark 属性列的类型
         TypeInformation fieldType = fieldTypes[pos];
 
         BoundedOutOfOrdernessTimestampExtractor waterMarker = null;
@@ -78,6 +81,7 @@ public class WaterMarkerAssigner {
             throw new IllegalArgumentException("not support type of " + fieldType + ", current only support(timestamp, long).");
         }
 
+        // assigner watermark
         return dataStream.assignTimestampsAndWatermarks(waterMarker);
     }
 }

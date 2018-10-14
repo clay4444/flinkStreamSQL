@@ -35,14 +35,19 @@ public abstract class TableInfo {
 
     public static final String PARALLELISM_KEY = "parallelism";
 
+    // 表名
     private String name;
 
+    // 表类型
     private String type;
 
+    // 表的属性
     private String[] fields;
 
+    // 属性类型名
     private String[] fieldTypes;
 
+    // 属性类型Class
     private Class<?>[] fieldClasses;
 
     private final List<String> fieldList = Lists.newArrayList();
@@ -51,8 +56,10 @@ public abstract class TableInfo {
 
     private final List<Class> fieldClassList = Lists.newArrayList();
 
+    //主键
     private List<String> primaryKeys;
 
+    //并发度
     private Integer parallelism = 1;
 
     public String[] getFieldTypes() {

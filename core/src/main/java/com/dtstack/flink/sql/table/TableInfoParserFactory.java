@@ -46,6 +46,7 @@ public class TableInfoParserFactory {
 
     private final static String TYPE_KEY = "type";
 
+    //维度表的一个标志，PERIOD FOR SYSTEM_TIME 带有这个的就说明是mysql 维度表
     private final static String SIDE_TABLE_SIGN = "(?i)^PERIOD\\s+FOR\\s+SYSTEM_TIME$";
 
     private final static Pattern SIDE_PATTERN = Pattern.compile(SIDE_TABLE_SIGN);
@@ -56,11 +57,24 @@ public class TableInfoParserFactory {
 
     private static Map<String, AbsTableParser> sideTableInfoMap = Maps.newConcurrentMap();
 
-    //Parsing loaded plugin
+    /**
+     * 加载插件去解析
+     * @param tableType   1 代表 source，2 代表sink
+     * @param parserResult   创建 这个表的时候，解析出来的属性
+     * @param localPluginRoot  插件地址
+     * @return
+     * @throws Exception
+     */
     public static TableInfo parseWithTableType(int tableType, CreateTableParser.SqlParserResult parserResult,
                                                String localPluginRoot) throws Exception {
+
+        // TODO   最顶层的 Table Parser
         AbsTableParser absTableParser = null;
+
+        // with 后面的属性
         Map<String, Object> props = parserResult.getPropMap();
+
+        // 查看和这个源表 / sink表 是什么类型 mysql / kafka
         String type = MathUtil.getString(props.get(TYPE_KEY));
 
         if(Strings.isNullOrEmpty(type)){
@@ -68,24 +82,34 @@ public class TableInfoParserFactory {
         }
 
         if(tableType == ETableType.SOURCE.getType()){
+            //source 源表 处理方式
+
+            // 检查是否是mysql 维度表（ 暂时只支持 mysql 维度表 ）
             boolean isSideTable = checkIsSideTable(parserResult.getFieldsInfoStr());
 
-            if(!isSideTable){
+            if(!isSideTable){  //不是维度表 ，说明是源表，
                 absTableParser = sourceTableInfoMap.get(type);
                 if(absTableParser == null){
+
+                    // KafkaSourceParser
                     absTableParser = StreamSourceFactory.getSqlParser(type, localPluginRoot);
                     sourceTableInfoMap.put(type, absTableParser);
                 }
-            }else{
+            }else{  //维度表
                 absTableParser = sideTableInfoMap.get(type);
                 if(absTableParser == null){
+                    // 获取 cache 类型： none，
                     String cacheType = MathUtil.getString(props.get(SideTableInfo.CACHE_KEY));
+
+                    // MysqlSideParser Class
                     absTableParser = StreamSideFactory.getSqlParser(type, localPluginRoot, cacheType);
                     sideTableInfoMap.put(type, absTableParser);
                 }
             }
 
         }else if(tableType == ETableType.SINK.getType()){
+            // sink 表 处理方式
+
             absTableParser = targetTableInfoMap.get(type);
             if(absTableParser == null){
                 absTableParser = StreamSinkFactory.getSqlParser(type, localPluginRoot);
@@ -102,11 +126,13 @@ public class TableInfoParserFactory {
         //Shield case
         parserResult.getPropMap().forEach((key,val) -> prop.put(key.toLowerCase(), val));
 
+        // 注册成 TableInfo 类 并返回 （FieldsInfo 分割设置类型等 ）
         return absTableParser.getTableInfo(parserResult.getTableName(), parserResult.getFieldsInfoStr(), prop);
     }
 
     /**
      * judge dim table of PERIOD FOR SYSTEM_TIME
+     * 检查当前的源表是否是维度表，判断的标准就是是否含有 PERIOD FOR SYSTEM_TIME 这个标志
      * @param tableField
      * @return
      */
