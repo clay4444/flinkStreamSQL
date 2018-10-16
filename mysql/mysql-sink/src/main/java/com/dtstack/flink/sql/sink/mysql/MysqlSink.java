@@ -39,11 +39,16 @@ public class MysqlSink extends DBSink implements IStreamSinkGener<MysqlSink> {
     public MysqlSink(){
     }
 
+    // 创建sql
     @Override
     public void buildSql(String tableName, List<String> fields){
         buildInsertSql(tableName, fields);
     }
 
+    /**
+     * 构建插入操作的sql语句
+     * replace into ... (..) values (...)
+     */
     private void buildInsertSql(String tableName, List<String> fields){
         String sqlTmp = "replace into " + tableName + " (${fields}) values (${placeholder})";
         String fieldsStr = "";
@@ -61,6 +66,8 @@ public class MysqlSink extends DBSink implements IStreamSinkGener<MysqlSink> {
         this.sql = sqlTmp;
     }
 
+
+    // 获取mysql sink
     @Override
     public MysqlSink genStreamSink(TargetTableInfo targetTableInfo) {
 
@@ -90,7 +97,9 @@ public class MysqlSink extends DBSink implements IStreamSinkGener<MysqlSink> {
         this.password = tmpPassword;
         this.tableName = tmpTableName;
         this.primaryKeys = mysqlTableInfo.getPrimaryKeys();
+        //构建sql 语句
         buildSql(tableName, fields);
+        // 设置 sqlTypes，（jdbc 定义的）
         buildSqlTypes(fieldTypeArray);
         return this;
     }

@@ -21,7 +21,7 @@
 package com.dtstack.flink.sql.side;
 
 /**
- * Reason:
+ * 别名信息
  * Date: 2018/7/24
  * Company: www.dtstack.com
  * @author xuchao

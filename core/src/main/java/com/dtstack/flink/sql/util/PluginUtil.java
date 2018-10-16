@@ -111,6 +111,7 @@ public class PluginUtil {
         return new URL("file:" + remoteSqlRootDir + SP + dirName + SP + jarName);
     }
 
+    //  mysql-async-side.jar
     public static URL getRemoteSideJarFilePath(String pluginType, String sideOperator, String tableType, String remoteSqlRootDir) throws MalformedURLException {
         String dirName = pluginType + sideOperator + tableType.toLowerCase();
         String jarName = String.format("%s-%s-%s.jar", pluginType, sideOperator, tableType.toLowerCase());

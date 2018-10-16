@@ -36,6 +36,9 @@ import java.util.Map;
  * @author xuchao
  */
 
+/**
+ * Join 范围
+ */
 public class JoinScope {
 
     private List<ScopeChild> children = Lists.newArrayList();

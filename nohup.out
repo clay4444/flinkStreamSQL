@@ -1,0 +1,980 @@
+SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+---exeSql---
+INSERT INTO MYRESULT
+(SELECT A.ORDER_ID, A.ORDER_PAY, B.USER_ID, B.USER_NAME
+FROM ORDERR AS A
+INNER JOIN USERR AS B ON A.USER_ID = B.USER_ID)
+---------side_exe_sql-----
+select USER_ID,USER_NAME,USER_AGE from user where USER_ID=? 
+-----------------
+Connected to JobManager at Actor[akka://flink/user/jobmanager_1#2139802425] with leader session id 94e6d64a-2ab1-421a-9271-665c9d020bb8.
+10/10/2018 16:31:46	Job execution switched to status RUNNING.
+10/10/2018 16:31:46	Source: Custom Source -> Map -> to: Row -> from: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME) -> select: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME(PROCTIME) AS PROCTIME) -> to: Row -> async wait operator -> Map -> select: (ORDER_ID, ORDER_PAY, USER_ID0, USER_NAME) -> to: Tuple2 -> Sink: Unnamed(1/1) switched to SCHEDULED 
+10/10/2018 16:31:46	Source: Custom Source -> Map -> to: Row -> from: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME) -> select: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME(PROCTIME) AS PROCTIME) -> to: Row -> async wait operator -> Map -> select: (ORDER_ID, ORDER_PAY, USER_ID0, USER_NAME) -> to: Tuple2 -> Sink: Unnamed(1/1) switched to DEPLOYING 
+10/10/2018 16:31:46	Source: Custom Source -> Map -> to: Row -> from: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME) -> select: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME(PROCTIME) AS PROCTIME) -> to: Row -> async wait operator -> Map -> select: (ORDER_ID, ORDER_PAY, USER_ID0, USER_NAME) -> to: Tuple2 -> Sink: Unnamed(1/1) switched to RUNNING 
+MLog initialization issue: slf4j found no binding or threatened to use its (dangerously silent) NOPLogger. We consider the slf4j library not found.
+十月 10, 2018 4:31:59 下午 io.vertx.core.impl.ContextImpl
+严重: Unhandled exception
+java.lang.IndexOutOfBoundsException: Index: 3, Size: 3
+	at java.util.ArrayList.rangeCheck(ArrayList.java:657)
+	at java.util.ArrayList.get(ArrayList.java:433)
+	at io.vertx.core.json.JsonArray.getValue(JsonArray.java:251)
+	at com.dtstack.flink.sql.side.mysql.MysqlAsyncReqRow.fillData(MysqlAsyncReqRow.java:198)
+	at com.dtstack.flink.sql.side.mysql.MysqlAsyncReqRow.lambda$null$1(MysqlAsyncReqRow.java:155)
+	at io.vertx.core.impl.FutureImpl.setHandler(FutureImpl.java:76)
+	at io.vertx.core.impl.ContextImpl.lambda$null$0(ContextImpl.java:289)
+	at io.vertx.core.impl.ContextImpl.lambda$wrapTask$2(ContextImpl.java:339)
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java:163)
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:404)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:463)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$5.run(SingleThreadEventExecutor.java:886)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.lang.Thread.run(Thread.java:748)
+
+10/10/2018 16:32:09	Source: Custom Source -> Map -> to: Row -> from: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME) -> select: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME(PROCTIME) AS PROCTIME) -> to: Row -> async wait operator -> Map -> select: (ORDER_ID, ORDER_PAY, USER_ID0, USER_NAME) -> to: Tuple2 -> Sink: Unnamed(1/1) switched to FAILED 
+java.lang.Exception: An async function call terminated with an exception. Failing the AsyncWaitOperator.
+	at org.apache.flink.streaming.api.operators.async.Emitter.output(Emitter.java:137)
+	at org.apache.flink.streaming.api.operators.async.Emitter.run(Emitter.java:85)
+	at java.lang.Thread.run(Thread.java:748)
+Caused by: java.util.concurrent.ExecutionException: java.util.concurrent.TimeoutException: Async function call has timed out.
+	at java.util.concurrent.CompletableFuture.reportGet(CompletableFuture.java:357)
+	at java.util.concurrent.CompletableFuture.get(CompletableFuture.java:1895)
+	at org.apache.flink.streaming.api.operators.async.queue.StreamRecordQueueEntry.get(StreamRecordQueueEntry.java:68)
+	at org.apache.flink.streaming.api.operators.async.Emitter.output(Emitter.java:129)
+	... 2 more
+Caused by: java.util.concurrent.TimeoutException: Async function call has timed out.
+	at org.apache.flink.streaming.api.operators.async.AsyncWaitOperator$1.onProcessingTime(AsyncWaitOperator.java:212)
+	at org.apache.flink.streaming.runtime.tasks.SystemProcessingTimeService$TriggerTask.run(SystemProcessingTimeService.java:249)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$201(ScheduledThreadPoolExecutor.java:180)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:293)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	... 1 more
+
+10/10/2018 16:32:09	Job execution switched to status FAILING.
+java.lang.Exception: An async function call terminated with an exception. Failing the AsyncWaitOperator.
+	at org.apache.flink.streaming.api.operators.async.Emitter.output(Emitter.java:137)
+	at org.apache.flink.streaming.api.operators.async.Emitter.run(Emitter.java:85)
+	at java.lang.Thread.run(Thread.java:748)
+Caused by: java.util.concurrent.ExecutionException: java.util.concurrent.TimeoutException: Async function call has timed out.
+	at java.util.concurrent.CompletableFuture.reportGet(CompletableFuture.java:357)
+	at java.util.concurrent.CompletableFuture.get(CompletableFuture.java:1895)
+	at org.apache.flink.streaming.api.operators.async.queue.StreamRecordQueueEntry.get(StreamRecordQueueEntry.java:68)
+	at org.apache.flink.streaming.api.operators.async.Emitter.output(Emitter.java:129)
+	... 2 more
+Caused by: java.util.concurrent.TimeoutException: Async function call has timed out.
+	at org.apache.flink.streaming.api.operators.async.AsyncWaitOperator$1.onProcessingTime(AsyncWaitOperator.java:212)
+	at org.apache.flink.streaming.runtime.tasks.SystemProcessingTimeService$TriggerTask.run(SystemProcessingTimeService.java:249)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$201(ScheduledThreadPoolExecutor.java:180)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:293)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	... 1 more
+10/10/2018 16:32:09	Job execution switched to status RESTARTING.
+10/10/2018 16:32:19	Job execution switched to status CREATED.
+10/10/2018 16:32:19	Job execution switched to status RUNNING.
+10/10/2018 16:32:19	Source: Custom Source -> Map -> to: Row -> from: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME) -> select: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME(PROCTIME) AS PROCTIME) -> to: Row -> async wait operator -> Map -> select: (ORDER_ID, ORDER_PAY, USER_ID0, USER_NAME) -> to: Tuple2 -> Sink: Unnamed(1/1) switched to SCHEDULED 
+10/10/2018 16:32:19	Source: Custom Source -> Map -> to: Row -> from: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME) -> select: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME(PROCTIME) AS PROCTIME) -> to: Row -> async wait operator -> Map -> select: (ORDER_ID, ORDER_PAY, USER_ID0, USER_NAME) -> to: Tuple2 -> Sink: Unnamed(1/1) switched to DEPLOYING 
+10/10/2018 16:32:19	Source: Custom Source -> Map -> to: Row -> from: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME) -> select: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME(PROCTIME) AS PROCTIME) -> to: Row -> async wait operator -> Map -> select: (ORDER_ID, ORDER_PAY, USER_ID0, USER_NAME) -> to: Tuple2 -> Sink: Unnamed(1/1) switched to RUNNING 
+MLog initialization issue: slf4j found no binding or threatened to use its (dangerously silent) NOPLogger. We consider the slf4j library not found.
+十月 10, 2018 4:39:21 下午 io.vertx.core.impl.ContextImpl
+严重: Unhandled exception
+java.lang.IndexOutOfBoundsException: Index: 3, Size: 3
+	at java.util.ArrayList.rangeCheck(ArrayList.java:657)
+	at java.util.ArrayList.get(ArrayList.java:433)
+	at io.vertx.core.json.JsonArray.getValue(JsonArray.java:251)
+	at com.dtstack.flink.sql.side.mysql.MysqlAsyncReqRow.fillData(MysqlAsyncReqRow.java:198)
+	at com.dtstack.flink.sql.side.mysql.MysqlAsyncReqRow.lambda$null$1(MysqlAsyncReqRow.java:155)
+	at io.vertx.core.impl.FutureImpl.setHandler(FutureImpl.java:76)
+	at io.vertx.core.impl.ContextImpl.lambda$null$0(ContextImpl.java:289)
+	at io.vertx.core.impl.ContextImpl.lambda$wrapTask$2(ContextImpl.java:339)
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java:163)
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:404)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:463)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$5.run(SingleThreadEventExecutor.java:886)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.lang.Thread.run(Thread.java:748)
+
+Exception in thread "Resource Destroyer in BasicResourcePool.close()" java.lang.NoClassDefFoundError: com/mchange/v2/resourcepool/BasicResourcePool$1DestroyResourceTask
+	at com.mchange.v2.resourcepool.BasicResourcePool.destroyResource(BasicResourcePool.java:1092)
+	at com.mchange.v2.resourcepool.BasicResourcePool.destroyResource(BasicResourcePool.java:1062)
+	at com.mchange.v2.resourcepool.BasicResourcePool.access$100(BasicResourcePool.java:44)
+	at com.mchange.v2.resourcepool.BasicResourcePool$5.run(BasicResourcePool.java:1316)
+Caused by: java.lang.ClassNotFoundException: com.mchange.v2.resourcepool.BasicResourcePool$1DestroyResourceTask
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
+	at org.apache.flink.runtime.execution.librarycache.FlinkUserCodeClassLoaders$ChildFirstClassLoader.loadClass(FlinkUserCodeClassLoaders.java:128)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
+	... 4 more
+10/10/2018 16:39:31	Source: Custom Source -> Map -> to: Row -> from: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME) -> select: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME(PROCTIME) AS PROCTIME) -> to: Row -> async wait operator -> Map -> select: (ORDER_ID, ORDER_PAY, USER_ID0, USER_NAME) -> to: Tuple2 -> Sink: Unnamed(1/1) switched to FAILED 
+java.lang.Exception: An async function call terminated with an exception. Failing the AsyncWaitOperator.
+	at org.apache.flink.streaming.api.operators.async.Emitter.output(Emitter.java:137)
+	at org.apache.flink.streaming.api.operators.async.Emitter.run(Emitter.java:85)
+	at java.lang.Thread.run(Thread.java:748)
+Caused by: java.util.concurrent.ExecutionException: java.util.concurrent.TimeoutException: Async function call has timed out.
+	at java.util.concurrent.CompletableFuture.reportGet(CompletableFuture.java:357)
+	at java.util.concurrent.CompletableFuture.get(CompletableFuture.java:1895)
+	at org.apache.flink.streaming.api.operators.async.queue.StreamRecordQueueEntry.get(StreamRecordQueueEntry.java:68)
+	at org.apache.flink.streaming.api.operators.async.Emitter.output(Emitter.java:129)
+	... 2 more
+Caused by: java.util.concurrent.TimeoutException: Async function call has timed out.
+	at org.apache.flink.streaming.api.operators.async.AsyncWaitOperator$1.onProcessingTime(AsyncWaitOperator.java:212)
+	at org.apache.flink.streaming.runtime.tasks.SystemProcessingTimeService$TriggerTask.run(SystemProcessingTimeService.java:249)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$201(ScheduledThreadPoolExecutor.java:180)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:293)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	... 1 more
+
+10/10/2018 16:39:31	Job execution switched to status FAILING.
+java.lang.Exception: An async function call terminated with an exception. Failing the AsyncWaitOperator.
+	at org.apache.flink.streaming.api.operators.async.Emitter.output(Emitter.java:137)
+	at org.apache.flink.streaming.api.operators.async.Emitter.run(Emitter.java:85)
+	at java.lang.Thread.run(Thread.java:748)
+Caused by: java.util.concurrent.ExecutionException: java.util.concurrent.TimeoutException: Async function call has timed out.
+	at java.util.concurrent.CompletableFuture.reportGet(CompletableFuture.java:357)
+	at java.util.concurrent.CompletableFuture.get(CompletableFuture.java:1895)
+	at org.apache.flink.streaming.api.operators.async.queue.StreamRecordQueueEntry.get(StreamRecordQueueEntry.java:68)
+	at org.apache.flink.streaming.api.operators.async.Emitter.output(Emitter.java:129)
+	... 2 more
+Caused by: java.util.concurrent.TimeoutException: Async function call has timed out.
+	at org.apache.flink.streaming.api.operators.async.AsyncWaitOperator$1.onProcessingTime(AsyncWaitOperator.java:212)
+	at org.apache.flink.streaming.runtime.tasks.SystemProcessingTimeService$TriggerTask.run(SystemProcessingTimeService.java:249)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$201(ScheduledThreadPoolExecutor.java:180)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:293)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	... 1 more
+10/10/2018 16:39:31	Job execution switched to status RESTARTING.
+10/10/2018 16:39:41	Job execution switched to status CREATED.
+10/10/2018 16:39:41	Job execution switched to status RUNNING.
+10/10/2018 16:39:41	Source: Custom Source -> Map -> to: Row -> from: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME) -> select: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME(PROCTIME) AS PROCTIME) -> to: Row -> async wait operator -> Map -> select: (ORDER_ID, ORDER_PAY, USER_ID0, USER_NAME) -> to: Tuple2 -> Sink: Unnamed(1/1) switched to SCHEDULED 
+10/10/2018 16:39:41	Source: Custom Source -> Map -> to: Row -> from: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME) -> select: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME(PROCTIME) AS PROCTIME) -> to: Row -> async wait operator -> Map -> select: (ORDER_ID, ORDER_PAY, USER_ID0, USER_NAME) -> to: Tuple2 -> Sink: Unnamed(1/1) switched to DEPLOYING 
+10/10/2018 16:39:41	Source: Custom Source -> Map -> to: Row -> from: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME) -> select: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME(PROCTIME) AS PROCTIME) -> to: Row -> async wait operator -> Map -> select: (ORDER_ID, ORDER_PAY, USER_ID0, USER_NAME) -> to: Tuple2 -> Sink: Unnamed(1/1) switched to RUNNING 
+MLog initialization issue: slf4j found no binding or threatened to use its (dangerously silent) NOPLogger. We consider the slf4j library not found.
+十月 10, 2018 4:44:58 下午 io.vertx.core.impl.ContextImpl
+严重: Unhandled exception
+java.lang.IndexOutOfBoundsException: Index: 3, Size: 3
+	at java.util.ArrayList.rangeCheck(ArrayList.java:657)
+	at java.util.ArrayList.get(ArrayList.java:433)
+	at io.vertx.core.json.JsonArray.getValue(JsonArray.java:251)
+	at com.dtstack.flink.sql.side.mysql.MysqlAsyncReqRow.fillData(MysqlAsyncReqRow.java:198)
+	at com.dtstack.flink.sql.side.mysql.MysqlAsyncReqRow.lambda$null$1(MysqlAsyncReqRow.java:155)
+	at io.vertx.core.impl.FutureImpl.setHandler(FutureImpl.java:76)
+	at io.vertx.core.impl.ContextImpl.lambda$null$0(ContextImpl.java:289)
+	at io.vertx.core.impl.ContextImpl.lambda$wrapTask$2(ContextImpl.java:339)
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java:163)
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:404)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:463)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$5.run(SingleThreadEventExecutor.java:886)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.lang.Thread.run(Thread.java:748)
+
+Exception in thread "Resource Destroyer in BasicResourcePool.close()" java.lang.NoClassDefFoundError: com/mchange/v2/resourcepool/BasicResourcePool$1DestroyResourceTask
+	at com.mchange.v2.resourcepool.BasicResourcePool.destroyResource(BasicResourcePool.java:1092)
+	at com.mchange.v2.resourcepool.BasicResourcePool.destroyResource(BasicResourcePool.java:1062)
+	at com.mchange.v2.resourcepool.BasicResourcePool.access$100(BasicResourcePool.java:44)
+	at com.mchange.v2.resourcepool.BasicResourcePool$5.run(BasicResourcePool.java:1316)
+Caused by: java.lang.ClassNotFoundException: com.mchange.v2.resourcepool.BasicResourcePool$1DestroyResourceTask
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
+	at org.apache.flink.runtime.execution.librarycache.FlinkUserCodeClassLoaders$ChildFirstClassLoader.loadClass(FlinkUserCodeClassLoaders.java:128)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
+	... 4 more
+10/10/2018 16:45:08	Source: Custom Source -> Map -> to: Row -> from: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME) -> select: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME(PROCTIME) AS PROCTIME) -> to: Row -> async wait operator -> Map -> select: (ORDER_ID, ORDER_PAY, USER_ID0, USER_NAME) -> to: Tuple2 -> Sink: Unnamed(1/1) switched to FAILED 
+java.lang.Exception: An async function call terminated with an exception. Failing the AsyncWaitOperator.
+	at org.apache.flink.streaming.api.operators.async.Emitter.output(Emitter.java:137)
+	at org.apache.flink.streaming.api.operators.async.Emitter.run(Emitter.java:85)
+	at java.lang.Thread.run(Thread.java:748)
+Caused by: java.util.concurrent.ExecutionException: java.util.concurrent.TimeoutException: Async function call has timed out.
+	at java.util.concurrent.CompletableFuture.reportGet(CompletableFuture.java:357)
+	at java.util.concurrent.CompletableFuture.get(CompletableFuture.java:1895)
+	at org.apache.flink.streaming.api.operators.async.queue.StreamRecordQueueEntry.get(StreamRecordQueueEntry.java:68)
+	at org.apache.flink.streaming.api.operators.async.Emitter.output(Emitter.java:129)
+	... 2 more
+Caused by: java.util.concurrent.TimeoutException: Async function call has timed out.
+	at org.apache.flink.streaming.api.operators.async.AsyncWaitOperator$1.onProcessingTime(AsyncWaitOperator.java:212)
+	at org.apache.flink.streaming.runtime.tasks.SystemProcessingTimeService$TriggerTask.run(SystemProcessingTimeService.java:249)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$201(ScheduledThreadPoolExecutor.java:180)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:293)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	... 1 more
+
+10/10/2018 16:45:08	Job execution switched to status FAILING.
+java.lang.Exception: An async function call terminated with an exception. Failing the AsyncWaitOperator.
+	at org.apache.flink.streaming.api.operators.async.Emitter.output(Emitter.java:137)
+	at org.apache.flink.streaming.api.operators.async.Emitter.run(Emitter.java:85)
+	at java.lang.Thread.run(Thread.java:748)
+Caused by: java.util.concurrent.ExecutionException: java.util.concurrent.TimeoutException: Async function call has timed out.
+	at java.util.concurrent.CompletableFuture.reportGet(CompletableFuture.java:357)
+	at java.util.concurrent.CompletableFuture.get(CompletableFuture.java:1895)
+	at org.apache.flink.streaming.api.operators.async.queue.StreamRecordQueueEntry.get(StreamRecordQueueEntry.java:68)
+	at org.apache.flink.streaming.api.operators.async.Emitter.output(Emitter.java:129)
+	... 2 more
+Caused by: java.util.concurrent.TimeoutException: Async function call has timed out.
+	at org.apache.flink.streaming.api.operators.async.AsyncWaitOperator$1.onProcessingTime(AsyncWaitOperator.java:212)
+	at org.apache.flink.streaming.runtime.tasks.SystemProcessingTimeService$TriggerTask.run(SystemProcessingTimeService.java:249)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$201(ScheduledThreadPoolExecutor.java:180)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:293)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	... 1 more
+10/10/2018 16:45:08	Job execution switched to status RESTARTING.
+10/10/2018 16:45:18	Job execution switched to status CREATED.
+10/10/2018 16:45:18	Job execution switched to status RUNNING.
+10/10/2018 16:45:18	Source: Custom Source -> Map -> to: Row -> from: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME) -> select: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME(PROCTIME) AS PROCTIME) -> to: Row -> async wait operator -> Map -> select: (ORDER_ID, ORDER_PAY, USER_ID0, USER_NAME) -> to: Tuple2 -> Sink: Unnamed(1/1) switched to SCHEDULED 
+10/10/2018 16:45:18	Source: Custom Source -> Map -> to: Row -> from: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME) -> select: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME(PROCTIME) AS PROCTIME) -> to: Row -> async wait operator -> Map -> select: (ORDER_ID, ORDER_PAY, USER_ID0, USER_NAME) -> to: Tuple2 -> Sink: Unnamed(1/1) switched to DEPLOYING 
+10/10/2018 16:45:18	Source: Custom Source -> Map -> to: Row -> from: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME) -> select: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME(PROCTIME) AS PROCTIME) -> to: Row -> async wait operator -> Map -> select: (ORDER_ID, ORDER_PAY, USER_ID0, USER_NAME) -> to: Tuple2 -> Sink: Unnamed(1/1) switched to RUNNING 
+MLog initialization issue: slf4j found no binding or threatened to use its (dangerously silent) NOPLogger. We consider the slf4j library not found.
+十月 10, 2018 4:46:30 下午 io.vertx.core.impl.ContextImpl
+严重: Unhandled exception
+java.lang.IndexOutOfBoundsException: Index: 3, Size: 3
+	at java.util.ArrayList.rangeCheck(ArrayList.java:657)
+	at java.util.ArrayList.get(ArrayList.java:433)
+	at io.vertx.core.json.JsonArray.getValue(JsonArray.java:251)
+	at com.dtstack.flink.sql.side.mysql.MysqlAsyncReqRow.fillData(MysqlAsyncReqRow.java:198)
+	at com.dtstack.flink.sql.side.mysql.MysqlAsyncReqRow.lambda$null$1(MysqlAsyncReqRow.java:155)
+	at io.vertx.core.impl.FutureImpl.setHandler(FutureImpl.java:76)
+	at io.vertx.core.impl.ContextImpl.lambda$null$0(ContextImpl.java:289)
+	at io.vertx.core.impl.ContextImpl.lambda$wrapTask$2(ContextImpl.java:339)
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java:163)
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:404)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:463)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$5.run(SingleThreadEventExecutor.java:886)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.lang.Thread.run(Thread.java:748)
+
+Exception in thread "Resource Destroyer in BasicResourcePool.close()" java.lang.NoClassDefFoundError: com/mchange/v2/resourcepool/BasicResourcePool$1DestroyResourceTask
+	at com.mchange.v2.resourcepool.BasicResourcePool.destroyResource(BasicResourcePool.java:1092)
+	at com.mchange.v2.resourcepool.BasicResourcePool.destroyResource(BasicResourcePool.java:1062)
+	at com.mchange.v2.resourcepool.BasicResourcePool.access$100(BasicResourcePool.java:44)
+	at com.mchange.v2.resourcepool.BasicResourcePool$5.run(BasicResourcePool.java:1316)
+Caused by: java.lang.ClassNotFoundException: com.mchange.v2.resourcepool.BasicResourcePool$1DestroyResourceTask
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
+	at org.apache.flink.runtime.execution.librarycache.FlinkUserCodeClassLoaders$ChildFirstClassLoader.loadClass(FlinkUserCodeClassLoaders.java:128)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)10/10/2018 16:46:40	Source: Custom Source -> Map -> to: Row -> from: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME) -> select: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME(PROCTIME) AS PROCTIME) -> to: Row -> async wait operator -> Map -> select: (ORDER_ID, ORDER_PAY, USER_ID0, USER_NAME) -> to: Tuple2 -> Sink: Unnamed(1/1) switched to FAILED 
+java.lang.Exception: An async function call terminated with an exception. Failing the AsyncWaitOperator.
+	at org.apache.flink.streaming.api.operators.async.Emitter.output(Emitter.java:137)
+	at org.apache.flink.streaming.api.operators.async.Emitter.run(Emitter.java:85)
+	at java.lang.Thread.run(Thread.java:748)
+Caused by: java.util.concurrent.ExecutionException: java.util.concurrent.TimeoutException: Async function call has timed out.
+	at java.util.concurrent.CompletableFuture.reportGet(CompletableFuture.java:357)
+	at java.util.concurrent.CompletableFuture.get(CompletableFuture.java:1895)
+	at org.apache.flink.streaming.api.operators.async.queue.StreamRecordQueueEntry.get(StreamRecordQueueEntry.java:68)
+	at org.apache.flink.streaming.api.operators.async.Emitter.output(Emitter.java:129)
+	... 2 more
+Caused by: java.util.concurrent.TimeoutException: Async function call has timed out.
+	at org.apache.flink.streaming.api.operators.async.AsyncWaitOperator$1.onProcessingTime(AsyncWaitOperator.java:212)
+	at org.apache.flink.streaming.runtime.tasks.SystemProcessingTimeService$TriggerTask.run(SystemProcessingTimeService.java:249)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$201(ScheduledThreadPoolExecutor.java:180)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:293)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	... 1 more
+
+
+	... 4 more
+10/10/2018 16:46:40	Job execution switched to status FAILING.
+java.lang.Exception: An async function call terminated with an exception. Failing the AsyncWaitOperator.
+	at org.apache.flink.streaming.api.operators.async.Emitter.output(Emitter.java:137)
+	at org.apache.flink.streaming.api.operators.async.Emitter.run(Emitter.java:85)
+	at java.lang.Thread.run(Thread.java:748)
+Caused by: java.util.concurrent.ExecutionException: java.util.concurrent.TimeoutException: Async function call has timed out.
+	at java.util.concurrent.CompletableFuture.reportGet(CompletableFuture.java:357)
+	at java.util.concurrent.CompletableFuture.get(CompletableFuture.java:1895)
+	at org.apache.flink.streaming.api.operators.async.queue.StreamRecordQueueEntry.get(StreamRecordQueueEntry.java:68)
+	at org.apache.flink.streaming.api.operators.async.Emitter.output(Emitter.java:129)
+	... 2 more
+Caused by: java.util.concurrent.TimeoutException: Async function call has timed out.
+	at org.apache.flink.streaming.api.operators.async.AsyncWaitOperator$1.onProcessingTime(AsyncWaitOperator.java:212)
+	at org.apache.flink.streaming.runtime.tasks.SystemProcessingTimeService$TriggerTask.run(SystemProcessingTimeService.java:249)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$201(ScheduledThreadPoolExecutor.java:180)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:293)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	... 1 more
+10/10/2018 16:46:40	Job execution switched to status RESTARTING.
+10/10/2018 16:46:50	Job execution switched to status CREATED.
+10/10/2018 16:46:50	Job execution switched to status RUNNING.
+10/10/2018 16:46:50	Source: Custom Source -> Map -> to: Row -> from: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME) -> select: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME(PROCTIME) AS PROCTIME) -> to: Row -> async wait operator -> Map -> select: (ORDER_ID, ORDER_PAY, USER_ID0, USER_NAME) -> to: Tuple2 -> Sink: Unnamed(1/1) switched to SCHEDULED 
+10/10/2018 16:46:50	Source: Custom Source -> Map -> to: Row -> from: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME) -> select: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME(PROCTIME) AS PROCTIME) -> to: Row -> async wait operator -> Map -> select: (ORDER_ID, ORDER_PAY, USER_ID0, USER_NAME) -> to: Tuple2 -> Sink: Unnamed(1/1) switched to DEPLOYING 
+10/10/2018 16:46:50	Source: Custom Source -> Map -> to: Row -> from: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME) -> select: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME(PROCTIME) AS PROCTIME) -> to: Row -> async wait operator -> Map -> select: (ORDER_ID, ORDER_PAY, USER_ID0, USER_NAME) -> to: Tuple2 -> Sink: Unnamed(1/1) switched to RUNNING 
+MLog initialization issue: slf4j found no binding or threatened to use its (dangerously silent) NOPLogger. We consider the slf4j library not found.
+十月 10, 2018 4:54:48 下午 io.vertx.core.impl.ContextImpl
+严重: Unhandled exception
+java.lang.IndexOutOfBoundsException: Index: 3, Size: 3
+	at java.util.ArrayList.rangeCheck(ArrayList.java:657)
+	at java.util.ArrayList.get(ArrayList.java:433)
+	at io.vertx.core.json.JsonArray.getValue(JsonArray.java:251)
+	at com.dtstack.flink.sql.side.mysql.MysqlAsyncReqRow.fillData(MysqlAsyncReqRow.java:198)
+	at com.dtstack.flink.sql.side.mysql.MysqlAsyncReqRow.lambda$null$1(MysqlAsyncReqRow.java:155)
+	at io.vertx.core.impl.FutureImpl.setHandler(FutureImpl.java:76)
+	at io.vertx.core.impl.ContextImpl.lambda$null$0(ContextImpl.java:289)
+	at io.vertx.core.impl.ContextImpl.lambda$wrapTask$2(ContextImpl.java:339)
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java:163)
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:404)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:463)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$5.run(SingleThreadEventExecutor.java:886)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.lang.Thread.run(Thread.java:748)
+
+Exception in thread "Resource Destroyer in BasicResourcePool.close()" java.lang.NoClassDefFoundError: com/mchange/v2/resourcepool/BasicResourcePool$1DestroyResourceTask
+	at com.mchange.v2.resourcepool.BasicResourcePool.destroyResource(BasicResourcePool.java:1092)
+	at com.mchange.v2.resourcepool.BasicResourcePool.destroyResource(BasicResourcePool.java:1062)
+	at com.mchange.v2.resourcepool.BasicResourcePool.access$100(BasicResourcePool.java:44)
+	at com.mchange.v2.resourcepool.BasicResourcePool$5.run(BasicResourcePool.java:1316)
+Caused by: java.lang.ClassNotFoundException: com.mchange.v2.resourcepool.BasicResourcePool$1DestroyResourceTask
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
+	at org.apache.flink.runtime.execution.librarycache.FlinkUserCodeClassLoaders$ChildFirstClassLoader.loadClass(FlinkUserCodeClassLoaders.java:128)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
+	... 4 more
+10/10/2018 16:54:58	Source: Custom Source -> Map -> to: Row -> from: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME) -> select: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME(PROCTIME) AS PROCTIME) -> to: Row -> async wait operator -> Map -> select: (ORDER_ID, ORDER_PAY, USER_ID0, USER_NAME) -> to: Tuple2 -> Sink: Unnamed(1/1) switched to FAILED 
+java.lang.Exception: An async function call terminated with an exception. Failing the AsyncWaitOperator.
+	at org.apache.flink.streaming.api.operators.async.Emitter.output(Emitter.java:137)
+	at org.apache.flink.streaming.api.operators.async.Emitter.run(Emitter.java:85)
+	at java.lang.Thread.run(Thread.java:748)
+Caused by: java.util.concurrent.ExecutionException: java.util.concurrent.TimeoutException: Async function call has timed out.
+	at java.util.concurrent.CompletableFuture.reportGet(CompletableFuture.java:357)
+	at java.util.concurrent.CompletableFuture.get(CompletableFuture.java:1895)
+	at org.apache.flink.streaming.api.operators.async.queue.StreamRecordQueueEntry.get(StreamRecordQueueEntry.java:68)
+	at org.apache.flink.streaming.api.operators.async.Emitter.output(Emitter.java:129)
+	... 2 more
+Caused by: java.util.concurrent.TimeoutException: Async function call has timed out.
+	at org.apache.flink.streaming.api.operators.async.AsyncWaitOperator$1.onProcessingTime(AsyncWaitOperator.java:212)
+	at org.apache.flink.streaming.runtime.tasks.SystemProcessingTimeService$TriggerTask.run(SystemProcessingTimeService.java:249)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$201(ScheduledThreadPoolExecutor.java:180)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:293)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	... 1 more
+
+10/10/2018 16:54:58	Job execution switched to status FAILING.
+java.lang.Exception: An async function call terminated with an exception. Failing the AsyncWaitOperator.
+	at org.apache.flink.streaming.api.operators.async.Emitter.output(Emitter.java:137)
+	at org.apache.flink.streaming.api.operators.async.Emitter.run(Emitter.java:85)
+	at java.lang.Thread.run(Thread.java:748)
+Caused by: java.util.concurrent.ExecutionException: java.util.concurrent.TimeoutException: Async function call has timed out.
+	at java.util.concurrent.CompletableFuture.reportGet(CompletableFuture.java:357)
+	at java.util.concurrent.CompletableFuture.get(CompletableFuture.java:1895)
+	at org.apache.flink.streaming.api.operators.async.queue.StreamRecordQueueEntry.get(StreamRecordQueueEntry.java:68)
+	at org.apache.flink.streaming.api.operators.async.Emitter.output(Emitter.java:129)
+	... 2 more
+Caused by: java.util.concurrent.TimeoutException: Async function call has timed out.
+	at org.apache.flink.streaming.api.operators.async.AsyncWaitOperator$1.onProcessingTime(AsyncWaitOperator.java:212)
+	at org.apache.flink.streaming.runtime.tasks.SystemProcessingTimeService$TriggerTask.run(SystemProcessingTimeService.java:249)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$201(ScheduledThreadPoolExecutor.java:180)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:293)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	... 1 more
+10/10/2018 16:54:58	Job execution switched to status RESTARTING.
+10/10/2018 16:55:08	Job execution switched to status CREATED.
+10/10/2018 16:55:08	Job execution switched to status RUNNING.
+10/10/2018 16:55:08	Source: Custom Source -> Map -> to: Row -> from: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME) -> select: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME(PROCTIME) AS PROCTIME) -> to: Row -> async wait operator -> Map -> select: (ORDER_ID, ORDER_PAY, USER_ID0, USER_NAME) -> to: Tuple2 -> Sink: Unnamed(1/1) switched to SCHEDULED 
+10/10/2018 16:55:08	Source: Custom Source -> Map -> to: Row -> from: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME) -> select: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME(PROCTIME) AS PROCTIME) -> to: Row -> async wait operator -> Map -> select: (ORDER_ID, ORDER_PAY, USER_ID0, USER_NAME) -> to: Tuple2 -> Sink: Unnamed(1/1) switched to DEPLOYING 
+10/10/2018 16:55:08	Source: Custom Source -> Map -> to: Row -> from: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME) -> select: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME(PROCTIME) AS PROCTIME) -> to: Row -> async wait operator -> Map -> select: (ORDER_ID, ORDER_PAY, USER_ID0, USER_NAME) -> to: Tuple2 -> Sink: Unnamed(1/1) switched to RUNNING 
+MLog initialization issue: slf4j found no binding or threatened to use its (dangerously silent) NOPLogger. We consider the slf4j library not found.
+十月 10, 2018 4:56:44 下午 io.vertx.core.impl.ContextImpl
+严重: Unhandled exception
+java.lang.IndexOutOfBoundsException: Index: 3, Size: 3
+	at java.util.ArrayList.rangeCheck(ArrayList.java:657)
+	at java.util.ArrayList.get(ArrayList.java:433)
+	at io.vertx.core.json.JsonArray.getValue(JsonArray.java:251)
+	at com.dtstack.flink.sql.side.mysql.MysqlAsyncReqRow.fillData(MysqlAsyncReqRow.java:198)
+	at com.dtstack.flink.sql.side.mysql.MysqlAsyncReqRow.lambda$null$1(MysqlAsyncReqRow.java:155)
+	at io.vertx.core.impl.FutureImpl.setHandler(FutureImpl.java:76)
+	at io.vertx.core.impl.ContextImpl.lambda$null$0(ContextImpl.java:289)
+	at io.vertx.core.impl.ContextImpl.lambda$wrapTask$2(ContextImpl.java:339)
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java:163)
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:404)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:463)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$5.run(SingleThreadEventExecutor.java:886)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.lang.Thread.run(Thread.java:748)
+
+Exception in thread "Resource Destroyer in BasicResourcePool.close()" java.lang.NoClassDefFoundError: com/mchange/v2/resourcepool/BasicResourcePool$1DestroyResourceTask
+	at com.mchange.v2.resourcepool.BasicResourcePool.destroyResource(BasicResourcePool.java:1092)
+	at com.mchange.v2.resourcepool.BasicResourcePool.destroyResource(BasicResourcePool.java:1062)
+10/10/2018 16:56:54	Source: Custom Source -> Map -> to: Row -> from: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME) -> select: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME(PROCTIME) AS PROCTIME) -> to: Row -> async wait operator -> Map -> select: (ORDER_ID, ORDER_PAY, USER_ID0, USER_NAME) -> to: Tuple2 -> Sink: Unnamed(1/1) switched to FAILED 
+java.lang.Exception: An async function call terminated with an exception. Failing the AsyncWaitOperator.
+	at org.apache.flink.streaming.api.operators.async.Emitter.output(Emitter.java:137)
+	at org.apache.flink.streaming.api.operators.async.Emitter.run(Emitter.java:85)
+	at java.lang.Thread.run(Thread.java:748)
+Caused by: java.util.concurrent.ExecutionException: java.util.concurrent.TimeoutException: Async function call has timed out.
+	at java.util.concurrent.CompletableFuture.reportGet(CompletableFuture.java:357)
+	at java.util.concurrent.CompletableFuture.get(CompletableFuture.java:1895)
+	at org.apache.flink.streaming.api.operators.async.queue.StreamRecordQueueEntry.get(StreamRecordQueueEntry.java:68)
+	at org.apache.flink.streaming.api.operators.async.Emitter.output(Emitter.java:129)
+	... 2 more
+Caused by: java.util.concurrent.TimeoutException: Async function call has timed out.
+	at org.apache.flink.streaming.api.operators.async.AsyncWaitOperator$1.onProcessingTime(AsyncWaitOperator.java:212)
+	at org.apache.flink.streaming.runtime.tasks.SystemProcessingTimeService$TriggerTask.run(SystemProcessingTimeService.java:249)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$201(ScheduledThreadPoolExecutor.java:180)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:293)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	... 1 more
+	at com.mchange.v2.resourcepool.BasicResourcePool.access$100(BasicResourcePool.java:44)
+
+	at com.mchange.v2.resourcepool.BasicResourcePool$5.run(BasicResourcePool.java:1316)
+10/10/2018 16:56:54	Job execution switched to status FAILING.Caused by: java.lang.ClassNotFoundException: com.mchange.v2.resourcepool.BasicResourcePool$1DestroyResourceTask
+
+java.lang.Exception: An async function call terminated with an exception. Failing the AsyncWaitOperator.
+	at org.apache.flink.streaming.api.operators.async.Emitter.output(Emitter.java:137)
+	at org.apache.flink.streaming.api.operators.async.Emitter.run(Emitter.java:85)
+	at java.lang.Thread.run(Thread.java:748)
+Caused by: java.util.concurrent.ExecutionException: java.util.concurrent.TimeoutException: Async function call has timed out.
+	at java.util.concurrent.CompletableFuture.reportGet(CompletableFuture.java:357)
+	at java.util.concurrent.CompletableFuture.get(CompletableFuture.java:1895)
+	at org.apache.flink.streaming.api.operators.async.queue.StreamRecordQueueEntry.get(StreamRecordQueueEntry.java:68)
+	at org.apache.flink.streaming.api.operators.async.Emitter.output(Emitter.java:129)
+	... 2 more
+Caused by: java.util.concurrent.TimeoutException: Async function call has timed out.
+	at org.apache.flink.streaming.api.operators.async.AsyncWaitOperator$1.onProcessingTime(AsyncWaitOperator.java:212)
+	at org.apache.flink.streaming.runtime.tasks.SystemProcessingTimeService$TriggerTask.run(SystemProcessingTimeService.java:249)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$201(ScheduledThreadPoolExecutor.java:180)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:293)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	... 1 more
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
+	at org.apache.flink.runtime.execution.librarycache.FlinkUserCodeClassLoaders$ChildFirstClassLoader.loadClass(FlinkUserCodeClassLoaders.java:128)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)10/10/2018 16:56:54	Job execution switched to status RESTARTING.
+
+	... 4 more
+10/10/2018 16:57:04	Job execution switched to status CREATED.
+10/10/2018 16:57:04	Job execution switched to status RUNNING.
+10/10/2018 16:57:04	Source: Custom Source -> Map -> to: Row -> from: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME) -> select: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME(PROCTIME) AS PROCTIME) -> to: Row -> async wait operator -> Map -> select: (ORDER_ID, ORDER_PAY, USER_ID0, USER_NAME) -> to: Tuple2 -> Sink: Unnamed(1/1) switched to SCHEDULED 
+10/10/2018 16:57:04	Source: Custom Source -> Map -> to: Row -> from: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME) -> select: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME(PROCTIME) AS PROCTIME) -> to: Row -> async wait operator -> Map -> select: (ORDER_ID, ORDER_PAY, USER_ID0, USER_NAME) -> to: Tuple2 -> Sink: Unnamed(1/1) switched to DEPLOYING 
+10/10/2018 16:57:04	Source: Custom Source -> Map -> to: Row -> from: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME) -> select: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME(PROCTIME) AS PROCTIME) -> to: Row -> async wait operator -> Map -> select: (ORDER_ID, ORDER_PAY, USER_ID0, USER_NAME) -> to: Tuple2 -> Sink: Unnamed(1/1) switched to RUNNING 
+MLog initialization issue: slf4j found no binding or threatened to use its (dangerously silent) NOPLogger. We consider the slf4j library not found.
+十月 10, 2018 5:00:09 下午 io.vertx.core.impl.ContextImpl
+严重: Unhandled exception
+java.lang.IndexOutOfBoundsException: Index: 3, Size: 3
+	at java.util.ArrayList.rangeCheck(ArrayList.java:657)
+	at java.util.ArrayList.get(ArrayList.java:433)
+	at io.vertx.core.json.JsonArray.getValue(JsonArray.java:251)
+	at com.dtstack.flink.sql.side.mysql.MysqlAsyncReqRow.fillData(MysqlAsyncReqRow.java:198)
+	at com.dtstack.flink.sql.side.mysql.MysqlAsyncReqRow.lambda$null$1(MysqlAsyncReqRow.java:155)
+	at io.vertx.core.impl.FutureImpl.setHandler(FutureImpl.java:76)
+	at io.vertx.core.impl.ContextImpl.lambda$null$0(ContextImpl.java:289)
+	at io.vertx.core.impl.ContextImpl.lambda$wrapTask$2(ContextImpl.java:339)
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java:163)
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:404)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:463)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$5.run(SingleThreadEventExecutor.java:886)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.lang.Thread.run(Thread.java:748)
+
+Exception in thread "Resource Destroyer in BasicResourcePool.close()" java.lang.NoClassDefFoundError: com/mchange/v2/resourcepool/BasicResourcePool$1DestroyResourceTask
+	at com.mchange.v2.resourcepool.BasicResourcePool.destroyResource(BasicResourcePool.java:1092)
+	at com.mchange.v2.resourcepool.BasicResourcePool.destroyResource(BasicResourcePool.java:1062)
+	at com.mchange.v2.resourcepool.BasicResourcePool.access$100(BasicResourcePool.java:44)
+	at com.mchange.v2.resourcepool.BasicResourcePool$5.run(BasicResourcePool.java:1316)
+Caused by: java.lang.ClassNotFoundException: com.mchange.v2.resourcepool.BasicResourcePool$1DestroyResourceTask
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
+	at org.apache.flink.runtime.execution.librarycache.FlinkUserCodeClassLoaders$ChildFirstClassLoader.loadClass(FlinkUserCodeClassLoaders.java:128)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
+	... 4 more
+10/10/2018 17:00:19	Source: Custom Source -> Map -> to: Row -> from: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME) -> select: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME(PROCTIME) AS PROCTIME) -> to: Row -> async wait operator -> Map -> select: (ORDER_ID, ORDER_PAY, USER_ID0, USER_NAME) -> to: Tuple2 -> Sink: Unnamed(1/1) switched to FAILED 
+java.lang.Exception: An async function call terminated with an exception. Failing the AsyncWaitOperator.
+	at org.apache.flink.streaming.api.operators.async.Emitter.output(Emitter.java:137)
+	at org.apache.flink.streaming.api.operators.async.Emitter.run(Emitter.java:85)
+	at java.lang.Thread.run(Thread.java:748)
+Caused by: java.util.concurrent.ExecutionException: java.util.concurrent.TimeoutException: Async function call has timed out.
+	at java.util.concurrent.CompletableFuture.reportGet(CompletableFuture.java:357)
+	at java.util.concurrent.CompletableFuture.get(CompletableFuture.java:1895)
+	at org.apache.flink.streaming.api.operators.async.queue.StreamRecordQueueEntry.get(StreamRecordQueueEntry.java:68)
+	at org.apache.flink.streaming.api.operators.async.Emitter.output(Emitter.java:129)
+	... 2 more
+Caused by: java.util.concurrent.TimeoutException: Async function call has timed out.
+	at org.apache.flink.streaming.api.operators.async.AsyncWaitOperator$1.onProcessingTime(AsyncWaitOperator.java:212)
+	at org.apache.flink.streaming.runtime.tasks.SystemProcessingTimeService$TriggerTask.run(SystemProcessingTimeService.java:249)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$201(ScheduledThreadPoolExecutor.java:180)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:293)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	... 1 more
+
+10/10/2018 17:00:19	Job execution switched to status FAILING.
+java.lang.Exception: An async function call terminated with an exception. Failing the AsyncWaitOperator.
+	at org.apache.flink.streaming.api.operators.async.Emitter.output(Emitter.java:137)
+	at org.apache.flink.streaming.api.operators.async.Emitter.run(Emitter.java:85)
+	at java.lang.Thread.run(Thread.java:748)
+Caused by: java.util.concurrent.ExecutionException: java.util.concurrent.TimeoutException: Async function call has timed out.
+	at java.util.concurrent.CompletableFuture.reportGet(CompletableFuture.java:357)
+	at java.util.concurrent.CompletableFuture.get(CompletableFuture.java:1895)
+	at org.apache.flink.streaming.api.operators.async.queue.StreamRecordQueueEntry.get(StreamRecordQueueEntry.java:68)
+	at org.apache.flink.streaming.api.operators.async.Emitter.output(Emitter.java:129)
+	... 2 more
+Caused by: java.util.concurrent.TimeoutException: Async function call has timed out.
+	at org.apache.flink.streaming.api.operators.async.AsyncWaitOperator$1.onProcessingTime(AsyncWaitOperator.java:212)
+	at org.apache.flink.streaming.runtime.tasks.SystemProcessingTimeService$TriggerTask.run(SystemProcessingTimeService.java:249)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$201(ScheduledThreadPoolExecutor.java:180)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:293)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	... 1 more
+10/10/2018 17:00:19	Job execution switched to status RESTARTING.
+10/10/2018 17:00:29	Job execution switched to status CREATED.
+10/10/2018 17:00:29	Job execution switched to status RUNNING.
+10/10/2018 17:00:29	Source: Custom Source -> Map -> to: Row -> from: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME) -> select: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME(PROCTIME) AS PROCTIME) -> to: Row -> async wait operator -> Map -> select: (ORDER_ID, ORDER_PAY, USER_ID0, USER_NAME) -> to: Tuple2 -> Sink: Unnamed(1/1) switched to SCHEDULED 
+10/10/2018 17:00:29	Source: Custom Source -> Map -> to: Row -> from: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME) -> select: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME(PROCTIME) AS PROCTIME) -> to: Row -> async wait operator -> Map -> select: (ORDER_ID, ORDER_PAY, USER_ID0, USER_NAME) -> to: Tuple2 -> Sink: Unnamed(1/1) switched to DEPLOYING 
+10/10/2018 17:00:29	Source: Custom Source -> Map -> to: Row -> from: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME) -> select: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME(PROCTIME) AS PROCTIME) -> to: Row -> async wait operator -> Map -> select: (ORDER_ID, ORDER_PAY, USER_ID0, USER_NAME) -> to: Tuple2 -> Sink: Unnamed(1/1) switched to RUNNING 
+MLog initialization issue: slf4j found no binding or threatened to use its (dangerously silent) NOPLogger. We consider the slf4j library not found.
+十月 10, 2018 5:09:57 下午 io.vertx.core.impl.ContextImpl
+严重: Unhandled exception
+java.lang.IndexOutOfBoundsException: Index: 3, Size: 3
+	at java.util.ArrayList.rangeCheck(ArrayList.java:657)
+	at java.util.ArrayList.get(ArrayList.java:433)
+	at io.vertx.core.json.JsonArray.getValue(JsonArray.java:251)
+	at com.dtstack.flink.sql.side.mysql.MysqlAsyncReqRow.fillData(MysqlAsyncReqRow.java:198)
+	at com.dtstack.flink.sql.side.mysql.MysqlAsyncReqRow.lambda$null$1(MysqlAsyncReqRow.java:155)
+	at io.vertx.core.impl.FutureImpl.setHandler(FutureImpl.java:76)
+	at io.vertx.core.impl.ContextImpl.lambda$null$0(ContextImpl.java:289)
+	at io.vertx.core.impl.ContextImpl.lambda$wrapTask$2(ContextImpl.java:339)
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java:163)
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:404)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:463)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$5.run(SingleThreadEventExecutor.java:886)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.lang.Thread.run(Thread.java:748)
+
+Exception in thread "Resource Destroyer in BasicResourcePool.close()" java.lang.NoClassDefFoundError: com/mchange/v2/resourcepool/BasicResourcePool$1DestroyResourceTask
+	at com.mchange.v2.resourcepool.BasicResourcePool.destroyResource(BasicResourcePool.java:1092)
+	at com.mchange.v2.resourcepool.BasicResourcePool.destroyResource(BasicResourcePool.java:1062)
+	at com.mchange.v2.resourcepool.BasicResourcePool.access$100(BasicResourcePool.java:44)
+	at com.mchange.v2.resourcepool.BasicResourcePool$5.run(BasicResourcePool.java:1316)
+Caused by: java.lang.ClassNotFoundException: com.mchange.v2.resourcepool.BasicResourcePool$1DestroyResourceTask
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
+	at org.apache.flink.runtime.execution.librarycache.FlinkUserCodeClassLoaders$ChildFirstClassLoader.loadClass(FlinkUserCodeClassLoaders.java:128)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
+10/10/2018 17:10:07	Source: Custom Source -> Map -> to: Row -> from: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME) -> select: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME(PROCTIME) AS PROCTIME) -> to: Row -> async wait operator -> Map -> select: (ORDER_ID, ORDER_PAY, USER_ID0, USER_NAME) -> to: Tuple2 -> Sink: Unnamed(1/1) switched to FAILED 
+java.lang.Exception: An async function call terminated with an exception. Failing the AsyncWaitOperator.
+	at org.apache.flink.streaming.api.operators.async.Emitter.output(Emitter.java:137)
+	at org.apache.flink.streaming.api.operators.async.Emitter.run(Emitter.java:85)
+	at java.lang.Thread.run(Thread.java:748)
+Caused by: java.util.concurrent.ExecutionException: java.util.concurrent.TimeoutException: Async function call has timed out.
+	at java.util.concurrent.CompletableFuture.reportGet(CompletableFuture.java:357)
+	at java.util.concurrent.CompletableFuture.get(CompletableFuture.java:1895)
+	at org.apache.flink.streaming.api.operators.async.queue.StreamRecordQueueEntry.get(StreamRecordQueueEntry.java:68)
+	at org.apache.flink.streaming.api.operators.async.Emitter.output(Emitter.java:129)
+	... 2 more
+Caused by: java.util.concurrent.TimeoutException: Async function call has timed out.
+	at org.apache.flink.streaming.api.operators.async.AsyncWaitOperator$1.onProcessingTime(AsyncWaitOperator.java:212)
+	at org.apache.flink.streaming.runtime.tasks.SystemProcessingTimeService$TriggerTask.run(SystemProcessingTimeService.java:249)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$201(ScheduledThreadPoolExecutor.java:180)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:293)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	... 1 more
+	... 4 more
+
+10/10/2018 17:10:07	Job execution switched to status FAILING.
+java.lang.Exception: An async function call terminated with an exception. Failing the AsyncWaitOperator.
+	at org.apache.flink.streaming.api.operators.async.Emitter.output(Emitter.java:137)
+	at org.apache.flink.streaming.api.operators.async.Emitter.run(Emitter.java:85)
+	at java.lang.Thread.run(Thread.java:748)
+Caused by: java.util.concurrent.ExecutionException: java.util.concurrent.TimeoutException: Async function call has timed out.
+	at java.util.concurrent.CompletableFuture.reportGet(CompletableFuture.java:357)
+	at java.util.concurrent.CompletableFuture.get(CompletableFuture.java:1895)
+	at org.apache.flink.streaming.api.operators.async.queue.StreamRecordQueueEntry.get(StreamRecordQueueEntry.java:68)
+	at org.apache.flink.streaming.api.operators.async.Emitter.output(Emitter.java:129)
+	... 2 more
+Caused by: java.util.concurrent.TimeoutException: Async function call has timed out.
+	at org.apache.flink.streaming.api.operators.async.AsyncWaitOperator$1.onProcessingTime(AsyncWaitOperator.java:212)
+	at org.apache.flink.streaming.runtime.tasks.SystemProcessingTimeService$TriggerTask.run(SystemProcessingTimeService.java:249)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$201(ScheduledThreadPoolExecutor.java:180)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:293)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	... 1 more
+10/10/2018 17:10:07	Job execution switched to status RESTARTING.
+10/10/2018 17:10:17	Job execution switched to status CREATED.
+10/10/2018 17:10:17	Job execution switched to status RUNNING.
+10/10/2018 17:10:17	Source: Custom Source -> Map -> to: Row -> from: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME) -> select: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME(PROCTIME) AS PROCTIME) -> to: Row -> async wait operator -> Map -> select: (ORDER_ID, ORDER_PAY, USER_ID0, USER_NAME) -> to: Tuple2 -> Sink: Unnamed(1/1) switched to SCHEDULED 
+10/10/2018 17:10:17	Source: Custom Source -> Map -> to: Row -> from: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME) -> select: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME(PROCTIME) AS PROCTIME) -> to: Row -> async wait operator -> Map -> select: (ORDER_ID, ORDER_PAY, USER_ID0, USER_NAME) -> to: Tuple2 -> Sink: Unnamed(1/1) switched to DEPLOYING 
+10/10/2018 17:10:17	Source: Custom Source -> Map -> to: Row -> from: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME) -> select: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME(PROCTIME) AS PROCTIME) -> to: Row -> async wait operator -> Map -> select: (ORDER_ID, ORDER_PAY, USER_ID0, USER_NAME) -> to: Tuple2 -> Sink: Unnamed(1/1) switched to RUNNING 
+MLog initialization issue: slf4j found no binding or threatened to use its (dangerously silent) NOPLogger. We consider the slf4j library not found.
+十月 10, 2018 5:14:18 下午 io.vertx.core.impl.ContextImpl
+严重: Unhandled exception
+java.lang.IndexOutOfBoundsException: Index: 3, Size: 3
+	at java.util.ArrayList.rangeCheck(ArrayList.java:657)
+	at java.util.ArrayList.get(ArrayList.java:433)
+	at io.vertx.core.json.JsonArray.getValue(JsonArray.java:251)
+	at com.dtstack.flink.sql.side.mysql.MysqlAsyncReqRow.fillData(MysqlAsyncReqRow.java:198)
+	at com.dtstack.flink.sql.side.mysql.MysqlAsyncReqRow.lambda$null$1(MysqlAsyncReqRow.java:155)
+	at io.vertx.core.impl.FutureImpl.setHandler(FutureImpl.java:76)
+	at io.vertx.core.impl.ContextImpl.lambda$null$0(ContextImpl.java:289)
+	at io.vertx.core.impl.ContextImpl.lambda$wrapTask$2(ContextImpl.java:339)
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java:163)
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:404)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:463)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$5.run(SingleThreadEventExecutor.java:886)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.lang.Thread.run(Thread.java:748)
+
+Exception in thread "Resource Destroyer in BasicResourcePool.close()" java.lang.NoClassDefFoundError: com/mchange/v2/resourcepool/BasicResourcePool$1DestroyResourceTask
+	at com.mchange.v2.resourcepool.BasicResourcePool.destroyResource(BasicResourcePool.java:1092)
+	at com.mchange.v2.resourcepool.BasicResourcePool.destroyResource(BasicResourcePool.java:1062)
+	at com.mchange.v2.resourcepool.BasicResourcePool.access$100(BasicResourcePool.java:44)
+	at com.mchange.v2.resourcepool.BasicResourcePool$5.run(BasicResourcePool.java:1316)
+Caused by: java.lang.ClassNotFoundException: com.mchange.v2.resourcepool.BasicResourcePool$1DestroyResourceTask
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
+10/10/2018 17:14:28	Source: Custom Source -> Map -> to: Row -> from: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME) -> select: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME(PROCTIME) AS PROCTIME) -> to: Row -> async wait operator -> Map -> select: (ORDER_ID, ORDER_PAY, USER_ID0, USER_NAME) -> to: Tuple2 -> Sink: Unnamed(1/1) switched to FAILED 
+java.lang.Exception: An async function call terminated with an exception. Failing the AsyncWaitOperator.
+	at org.apache.flink.streaming.api.operators.async.Emitter.output(Emitter.java:137)
+	at org.apache.flink.streaming.api.operators.async.Emitter.run(Emitter.java:85)
+	at java.lang.Thread.run(Thread.java:748)
+Caused by: java.util.concurrent.ExecutionException: java.util.concurrent.TimeoutException: Async function call has timed out.
+	at java.util.concurrent.CompletableFuture.reportGet(CompletableFuture.java:357)
+	at java.util.concurrent.CompletableFuture.get(CompletableFuture.java:1895)
+	at org.apache.flink.streaming.api.operators.async.queue.StreamRecordQueueEntry.get(StreamRecordQueueEntry.java:68)
+	at org.apache.flink.streaming.api.operators.async.Emitter.output(Emitter.java:129)
+	... 2 more
+Caused by: java.util.concurrent.TimeoutException: Async function call has timed out.
+	at org.apache.flink.streaming.api.operators.async.AsyncWaitOperator$1.onProcessingTime(AsyncWaitOperator.java:212)
+	at org.apache.flink.streaming.runtime.tasks.SystemProcessingTimeService$TriggerTask.run(SystemProcessingTimeService.java:249)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$201(ScheduledThreadPoolExecutor.java:180)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:293)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	... 1 more
+	at org.apache.flink.runtime.execution.librarycache.FlinkUserCodeClassLoaders$ChildFirstClassLoader.loadClass(FlinkUserCodeClassLoaders.java:128)
+
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
+	... 4 more
+10/10/2018 17:14:28	Job execution switched to status FAILING.
+java.lang.Exception: An async function call terminated with an exception. Failing the AsyncWaitOperator.
+	at org.apache.flink.streaming.api.operators.async.Emitter.output(Emitter.java:137)
+	at org.apache.flink.streaming.api.operators.async.Emitter.run(Emitter.java:85)
+	at java.lang.Thread.run(Thread.java:748)
+Caused by: java.util.concurrent.ExecutionException: java.util.concurrent.TimeoutException: Async function call has timed out.
+	at java.util.concurrent.CompletableFuture.reportGet(CompletableFuture.java:357)
+	at java.util.concurrent.CompletableFuture.get(CompletableFuture.java:1895)
+	at org.apache.flink.streaming.api.operators.async.queue.StreamRecordQueueEntry.get(StreamRecordQueueEntry.java:68)
+	at org.apache.flink.streaming.api.operators.async.Emitter.output(Emitter.java:129)
+	... 2 more
+Caused by: java.util.concurrent.TimeoutException: Async function call has timed out.
+	at org.apache.flink.streaming.api.operators.async.AsyncWaitOperator$1.onProcessingTime(AsyncWaitOperator.java:212)
+	at org.apache.flink.streaming.runtime.tasks.SystemProcessingTimeService$TriggerTask.run(SystemProcessingTimeService.java:249)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$201(ScheduledThreadPoolExecutor.java:180)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:293)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	... 1 more
+10/10/2018 17:14:28	Job execution switched to status RESTARTING.
+10/10/2018 17:14:38	Job execution switched to status CREATED.
+10/10/2018 17:14:38	Job execution switched to status RUNNING.
+10/10/2018 17:14:38	Source: Custom Source -> Map -> to: Row -> from: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME) -> select: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME(PROCTIME) AS PROCTIME) -> to: Row -> async wait operator -> Map -> select: (ORDER_ID, ORDER_PAY, USER_ID0, USER_NAME) -> to: Tuple2 -> Sink: Unnamed(1/1) switched to SCHEDULED 
+10/10/2018 17:14:38	Source: Custom Source -> Map -> to: Row -> from: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME) -> select: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME(PROCTIME) AS PROCTIME) -> to: Row -> async wait operator -> Map -> select: (ORDER_ID, ORDER_PAY, USER_ID0, USER_NAME) -> to: Tuple2 -> Sink: Unnamed(1/1) switched to DEPLOYING 
+10/10/2018 17:14:38	Source: Custom Source -> Map -> to: Row -> from: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME) -> select: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME(PROCTIME) AS PROCTIME) -> to: Row -> async wait operator -> Map -> select: (ORDER_ID, ORDER_PAY, USER_ID0, USER_NAME) -> to: Tuple2 -> Sink: Unnamed(1/1) switched to RUNNING 
+MLog initialization issue: slf4j found no binding or threatened to use its (dangerously silent) NOPLogger. We consider the slf4j library not found.
+十月 10, 2018 5:14:43 下午 io.vertx.core.impl.ContextImpl
+严重: Unhandled exception
+java.lang.IndexOutOfBoundsException: Index: 3, Size: 3
+	at java.util.ArrayList.rangeCheck(ArrayList.java:657)
+	at java.util.ArrayList.get(ArrayList.java:433)
+	at io.vertx.core.json.JsonArray.getValue(JsonArray.java:251)
+	at com.dtstack.flink.sql.side.mysql.MysqlAsyncReqRow.fillData(MysqlAsyncReqRow.java:198)
+	at com.dtstack.flink.sql.side.mysql.MysqlAsyncReqRow.lambda$null$1(MysqlAsyncReqRow.java:155)
+	at io.vertx.core.impl.FutureImpl.setHandler(FutureImpl.java:76)
+	at io.vertx.core.impl.ContextImpl.lambda$null$0(ContextImpl.java:289)
+	at io.vertx.core.impl.ContextImpl.lambda$wrapTask$2(ContextImpl.java:339)
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java:163)
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:404)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:463)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$5.run(SingleThreadEventExecutor.java:886)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.lang.Thread.run(Thread.java:748)
+
+Exception in thread "Resource Destroyer in BasicResourcePool.close()" java.lang.NoClassDefFoundError: com/mchange/v2/resourcepool/BasicResourcePool$1DestroyResourceTask
+	at com.mchange.v2.resourcepool.BasicResourcePool.destroyResource(BasicResourcePool.java:1092)
+	at com.mchange.v2.resourcepool.BasicResourcePool.destroyResource(BasicResourcePool.java:1062)
+	at com.mchange.v2.resourcepool.BasicResourcePool.access$100(BasicResourcePool.java:44)
+	at com.mchange.v2.resourcepool.BasicResourcePool$5.run(BasicResourcePool.java:1316)
+10/10/2018 17:14:52	Source: Custom Source -> Map -> to: Row -> from: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME) -> select: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME(PROCTIME) AS PROCTIME) -> to: Row -> async wait operator -> Map -> select: (ORDER_ID, ORDER_PAY, USER_ID0, USER_NAME) -> to: Tuple2 -> Sink: Unnamed(1/1) switched to FAILED 
+java.lang.Exception: An async function call terminated with an exception. Failing the AsyncWaitOperator.
+	at org.apache.flink.streaming.api.operators.async.Emitter.output(Emitter.java:137)
+	at org.apache.flink.streaming.api.operators.async.Emitter.run(Emitter.java:85)
+	at java.lang.Thread.run(Thread.java:748)
+Caused by: java.util.concurrent.ExecutionException: java.util.concurrent.TimeoutException: Async function call has timed out.
+	at java.util.concurrent.CompletableFuture.reportGet(CompletableFuture.java:357)
+	at java.util.concurrent.CompletableFuture.get(CompletableFuture.java:1895)
+	at org.apache.flink.streaming.api.operators.async.queue.StreamRecordQueueEntry.get(StreamRecordQueueEntry.java:68)
+	at org.apache.flink.streaming.api.operators.async.Emitter.output(Emitter.java:129)
+	... 2 more
+Caused by: java.util.concurrent.TimeoutException: Async function call has timed out.
+	at org.apache.flink.streaming.api.operators.async.AsyncWaitOperator$1.onProcessingTime(AsyncWaitOperator.java:212)
+	at org.apache.flink.streaming.runtime.tasks.SystemProcessingTimeService$TriggerTask.run(SystemProcessingTimeService.java:249)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$201(ScheduledThreadPoolExecutor.java:180)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:293)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	... 1 more
+Caused by: java.lang.ClassNotFoundException: com.mchange.v2.resourcepool.BasicResourcePool$1DestroyResourceTask
+
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
+	at org.apache.flink.runtime.execution.librarycache.FlinkUserCodeClassLoaders$ChildFirstClassLoader.loadClass(FlinkUserCodeClassLoaders.java:128)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
+	... 4 more
+10/10/2018 17:14:52	Job execution switched to status FAILING.
+java.lang.Exception: An async function call terminated with an exception. Failing the AsyncWaitOperator.
+	at org.apache.flink.streaming.api.operators.async.Emitter.output(Emitter.java:137)
+	at org.apache.flink.streaming.api.operators.async.Emitter.run(Emitter.java:85)
+	at java.lang.Thread.run(Thread.java:748)
+Caused by: java.util.concurrent.ExecutionException: java.util.concurrent.TimeoutException: Async function call has timed out.
+	at java.util.concurrent.CompletableFuture.reportGet(CompletableFuture.java:357)
+	at java.util.concurrent.CompletableFuture.get(CompletableFuture.java:1895)
+	at org.apache.flink.streaming.api.operators.async.queue.StreamRecordQueueEntry.get(StreamRecordQueueEntry.java:68)
+	at org.apache.flink.streaming.api.operators.async.Emitter.output(Emitter.java:129)
+	... 2 more
+Caused by: java.util.concurrent.TimeoutException: Async function call has timed out.
+	at org.apache.flink.streaming.api.operators.async.AsyncWaitOperator$1.onProcessingTime(AsyncWaitOperator.java:212)
+	at org.apache.flink.streaming.runtime.tasks.SystemProcessingTimeService$TriggerTask.run(SystemProcessingTimeService.java:249)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$201(ScheduledThreadPoolExecutor.java:180)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:293)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	... 1 more
+10/10/2018 17:14:52	Job execution switched to status RESTARTING.
+10/10/2018 17:15:02	Job execution switched to status CREATED.
+10/10/2018 17:15:02	Job execution switched to status RUNNING.
+10/10/2018 17:15:02	Source: Custom Source -> Map -> to: Row -> from: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME) -> select: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME(PROCTIME) AS PROCTIME) -> to: Row -> async wait operator -> Map -> select: (ORDER_ID, ORDER_PAY, USER_ID0, USER_NAME) -> to: Tuple2 -> Sink: Unnamed(1/1) switched to SCHEDULED 
+10/10/2018 17:15:02	Source: Custom Source -> Map -> to: Row -> from: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME) -> select: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME(PROCTIME) AS PROCTIME) -> to: Row -> async wait operator -> Map -> select: (ORDER_ID, ORDER_PAY, USER_ID0, USER_NAME) -> to: Tuple2 -> Sink: Unnamed(1/1) switched to DEPLOYING 
+10/10/2018 17:15:02	Source: Custom Source -> Map -> to: Row -> from: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME) -> select: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME(PROCTIME) AS PROCTIME) -> to: Row -> async wait operator -> Map -> select: (ORDER_ID, ORDER_PAY, USER_ID0, USER_NAME) -> to: Tuple2 -> Sink: Unnamed(1/1) switched to RUNNING 
+MLog initialization issue: slf4j found no binding or threatened to use its (dangerously silent) NOPLogger. We consider the slf4j library not found.
+十月 10, 2018 5:17:05 下午 io.vertx.core.impl.ContextImpl
+严重: Unhandled exception
+java.lang.IndexOutOfBoundsException: Index: 3, Size: 3
+	at java.util.ArrayList.rangeCheck(ArrayList.java:657)
+	at java.util.ArrayList.get(ArrayList.java:433)
+	at io.vertx.core.json.JsonArray.getValue(JsonArray.java:251)
+	at com.dtstack.flink.sql.side.mysql.MysqlAsyncReqRow.fillData(MysqlAsyncReqRow.java:198)
+	at com.dtstack.flink.sql.side.mysql.MysqlAsyncReqRow.lambda$null$1(MysqlAsyncReqRow.java:155)
+	at io.vertx.core.impl.FutureImpl.setHandler(FutureImpl.java:76)
+	at io.vertx.core.impl.ContextImpl.lambda$null$0(ContextImpl.java:289)
+	at io.vertx.core.impl.ContextImpl.lambda$wrapTask$2(ContextImpl.java:339)
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java:163)
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:404)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:463)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$5.run(SingleThreadEventExecutor.java:886)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.lang.Thread.run(Thread.java:748)
+
+Exception in thread "Resource Destroyer in BasicResourcePool.close()" java.lang.NoClassDefFoundError: com/mchange/v2/resourcepool/BasicResourcePool$1DestroyResourceTask
+	at com.mchange.v2.resourcepool.BasicResourcePool.destroyResource(BasicResourcePool.java:1092)
+	at com.mchange.v2.resourcepool.BasicResourcePool.destroyResource(BasicResourcePool.java:1062)
+	at com.mchange.v2.resourcepool.BasicResourcePool.access$100(BasicResourcePool.java:44)
+	at com.mchange.v2.resourcepool.BasicResourcePool$5.run(BasicResourcePool.java:1316)
+Caused by: java.lang.ClassNotFoundException: com.mchange.v2.resourcepool.BasicResourcePool$1DestroyResourceTask
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
+	at org.apache.flink.runtime.execution.librarycache.FlinkUserCodeClassLoaders$ChildFirstClassLoader.loadClass(FlinkUserCodeClassLoaders.java:128)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
+	... 4 more
+10/10/2018 17:17:15	Source: Custom Source -> Map -> to: Row -> from: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME) -> select: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME(PROCTIME) AS PROCTIME) -> to: Row -> async wait operator -> Map -> select: (ORDER_ID, ORDER_PAY, USER_ID0, USER_NAME) -> to: Tuple2 -> Sink: Unnamed(1/1) switched to FAILED 
+java.lang.Exception: An async function call terminated with an exception. Failing the AsyncWaitOperator.
+	at org.apache.flink.streaming.api.operators.async.Emitter.output(Emitter.java:137)
+	at org.apache.flink.streaming.api.operators.async.Emitter.run(Emitter.java:85)
+	at java.lang.Thread.run(Thread.java:748)
+Caused by: java.util.concurrent.ExecutionException: java.util.concurrent.TimeoutException: Async function call has timed out.
+	at java.util.concurrent.CompletableFuture.reportGet(CompletableFuture.java:357)
+	at java.util.concurrent.CompletableFuture.get(CompletableFuture.java:1895)
+	at org.apache.flink.streaming.api.operators.async.queue.StreamRecordQueueEntry.get(StreamRecordQueueEntry.java:68)
+	at org.apache.flink.streaming.api.operators.async.Emitter.output(Emitter.java:129)
+	... 2 more
+Caused by: java.util.concurrent.TimeoutException: Async function call has timed out.
+	at org.apache.flink.streaming.api.operators.async.AsyncWaitOperator$1.onProcessingTime(AsyncWaitOperator.java:212)
+	at org.apache.flink.streaming.runtime.tasks.SystemProcessingTimeService$TriggerTask.run(SystemProcessingTimeService.java:249)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$201(ScheduledThreadPoolExecutor.java:180)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:293)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	... 1 more
+
+10/10/2018 17:17:15	Job execution switched to status FAILING.
+java.lang.Exception: An async function call terminated with an exception. Failing the AsyncWaitOperator.
+	at org.apache.flink.streaming.api.operators.async.Emitter.output(Emitter.java:137)
+	at org.apache.flink.streaming.api.operators.async.Emitter.run(Emitter.java:85)
+	at java.lang.Thread.run(Thread.java:748)
+Caused by: java.util.concurrent.ExecutionException: java.util.concurrent.TimeoutException: Async function call has timed out.
+	at java.util.concurrent.CompletableFuture.reportGet(CompletableFuture.java:357)
+	at java.util.concurrent.CompletableFuture.get(CompletableFuture.java:1895)
+	at org.apache.flink.streaming.api.operators.async.queue.StreamRecordQueueEntry.get(StreamRecordQueueEntry.java:68)
+	at org.apache.flink.streaming.api.operators.async.Emitter.output(Emitter.java:129)
+	... 2 more
+Caused by: java.util.concurrent.TimeoutException: Async function call has timed out.
+	at org.apache.flink.streaming.api.operators.async.AsyncWaitOperator$1.onProcessingTime(AsyncWaitOperator.java:212)
+	at org.apache.flink.streaming.runtime.tasks.SystemProcessingTimeService$TriggerTask.run(SystemProcessingTimeService.java:249)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$201(ScheduledThreadPoolExecutor.java:180)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:293)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	... 1 more
+10/10/2018 17:17:15	Job execution switched to status RESTARTING.
+10/10/2018 17:17:25	Job execution switched to status CREATED.
+10/10/2018 17:17:25	Job execution switched to status RUNNING.
+10/10/2018 17:17:25	Source: Custom Source -> Map -> to: Row -> from: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME) -> select: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME(PROCTIME) AS PROCTIME) -> to: Row -> async wait operator -> Map -> select: (ORDER_ID, ORDER_PAY, USER_ID0, USER_NAME) -> to: Tuple2 -> Sink: Unnamed(1/1) switched to SCHEDULED 
+10/10/2018 17:17:25	Source: Custom Source -> Map -> to: Row -> from: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME) -> select: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME(PROCTIME) AS PROCTIME) -> to: Row -> async wait operator -> Map -> select: (ORDER_ID, ORDER_PAY, USER_ID0, USER_NAME) -> to: Tuple2 -> Sink: Unnamed(1/1) switched to DEPLOYING 
+10/10/2018 17:17:25	Source: Custom Source -> Map -> to: Row -> from: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME) -> select: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME(PROCTIME) AS PROCTIME) -> to: Row -> async wait operator -> Map -> select: (ORDER_ID, ORDER_PAY, USER_ID0, USER_NAME) -> to: Tuple2 -> Sink: Unnamed(1/1) switched to RUNNING 
+MLog initialization issue: slf4j found no binding or threatened to use its (dangerously silent) NOPLogger. We consider the slf4j library not found.
+十月 10, 2018 5:20:11 下午 io.vertx.core.impl.ContextImpl
+严重: Unhandled exception
+java.lang.IndexOutOfBoundsException: Index: 3, Size: 3
+	at java.util.ArrayList.rangeCheck(ArrayList.java:657)
+	at java.util.ArrayList.get(ArrayList.java:433)
+	at io.vertx.core.json.JsonArray.getValue(JsonArray.java:251)
+	at com.dtstack.flink.sql.side.mysql.MysqlAsyncReqRow.fillData(MysqlAsyncReqRow.java:198)
+	at com.dtstack.flink.sql.side.mysql.MysqlAsyncReqRow.lambda$null$1(MysqlAsyncReqRow.java:155)
+	at io.vertx.core.impl.FutureImpl.setHandler(FutureImpl.java:76)
+	at io.vertx.core.impl.ContextImpl.lambda$null$0(ContextImpl.java:289)
+	at io.vertx.core.impl.ContextImpl.lambda$wrapTask$2(ContextImpl.java:339)
+	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java:163)
+	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:404)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:463)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$5.run(SingleThreadEventExecutor.java:886)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.lang.Thread.run(Thread.java:748)
+
+Exception in thread "Resource Destroyer in BasicResourcePool.close()" java.lang.NoClassDefFoundError: com/mchange/v2/resourcepool/BasicResourcePool$1DestroyResourceTask
+	at com.mchange.v2.resourcepool.BasicResourcePool.destroyResource(BasicResourcePool.java:1092)
+	at com.mchange.v2.resourcepool.BasicResourcePool.destroyResource(BasicResourcePool.java:1062)
+	at com.mchange.v2.resourcepool.BasicResourcePool.access$100(BasicResourcePool.java:44)
+	at com.mchange.v2.resourcepool.BasicResourcePool$5.run(BasicResourcePool.java:1316)
+Caused by: java.lang.ClassNotFoundException: com.mchange.v2.resourcepool.BasicResourcePool$1DestroyResourceTask
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:381)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:424)
+	at org.apache.flink.runtime.execution.librarycache.FlinkUserCodeClassLoaders$ChildFirstClassLoader.loadClass(FlinkUserCodeClassLoaders.java:128)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:357)
+	... 4 more
+10/10/2018 17:20:21	Source: Custom Source -> Map -> to: Row -> from: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME) -> select: (ORDER_ID, ORDER_PAY, ORDER_DESC, USER_ID, PROCTIME(PROCTIME) AS PROCTIME) -> to: Row -> async wait operator -> Map -> select: (ORDER_ID, ORDER_PAY, USER_ID0, USER_NAME) -> to: Tuple2 -> Sink: Unnamed(1/1) switched to FAILED 
+java.lang.Exception: An async function call terminated with an exception. Failing the AsyncWaitOperator.
+	at org.apache.flink.streaming.api.operators.async.Emitter.output(Emitter.java:137)
+	at org.apache.flink.streaming.api.operators.async.Emitter.run(Emitter.java:85)
+	at java.lang.Thread.run(Thread.java:748)
+Caused by: java.util.concurrent.ExecutionException: java.util.concurrent.TimeoutException: Async function call has timed out.
+	at java.util.concurrent.CompletableFuture.reportGet(CompletableFuture.java:357)
+	at java.util.concurrent.CompletableFuture.get(CompletableFuture.java:1895)
+	at org.apache.flink.streaming.api.operators.async.queue.StreamRecordQueueEntry.get(StreamRecordQueueEntry.java:68)
+	at org.apache.flink.streaming.api.operators.async.Emitter.output(Emitter.java:129)
+	... 2 more
+Caused by: java.util.concurrent.TimeoutException: Async function call has timed out.
+	at org.apache.flink.streaming.api.operators.async.AsyncWaitOperator$1.onProcessingTime(AsyncWaitOperator.java:212)
+	at org.apache.flink.streaming.runtime.tasks.SystemProcessingTimeService$TriggerTask.run(SystemProcessingTimeService.java:249)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$201(ScheduledThreadPoolExecutor.java:180)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:293)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	... 1 more
+
+10/10/2018 17:20:21	Job execution switched to status FAILING.
+java.lang.Exception: An async function call terminated with an exception. Failing the AsyncWaitOperator.
+	at org.apache.flink.streaming.api.operators.async.Emitter.output(Emitter.java:137)
+	at org.apache.flink.streaming.api.operators.async.Emitter.run(Emitter.java:85)
+	at java.lang.Thread.run(Thread.java:748)
+Caused by: java.util.concurrent.ExecutionException: java.util.concurrent.TimeoutException: Async function call has timed out.
+	at java.util.concurrent.CompletableFuture.reportGet(CompletableFuture.java:357)
+	at java.util.concurrent.CompletableFuture.get(CompletableFuture.java:1895)
+	at org.apache.flink.streaming.api.operators.async.queue.StreamRecordQueueEntry.get(StreamRecordQueueEntry.java:68)
+	at org.apache.flink.streaming.api.operators.async.Emitter.output(Emitter.java:129)
+	... 2 more
+Caused by: java.util.concurrent.TimeoutException: Async function call has timed out.
+	at org.apache.flink.streaming.api.operators.async.AsyncWaitOperator$1.onProcessingTime(AsyncWaitOperator.java:212)
+	at org.apache.flink.streaming.runtime.tasks.SystemProcessingTimeService$TriggerTask.run(SystemProcessingTimeService.java:249)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$201(ScheduledThreadPoolExecutor.java:180)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:293)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	... 1 more
+10/10/2018 17:20:21	Job execution switched to status FAILED.
+Exception in thread "main" org.apache.flink.runtime.client.JobExecutionException: Job execution failed.
+	at org.apache.flink.runtime.jobmanager.JobManager$$anonfun$handleMessage$1$$anonfun$applyOrElse$6.apply$mcV$sp(JobManager.scala:897)
+	at org.apache.flink.runtime.jobmanager.JobManager$$anonfun$handleMessage$1$$anonfun$applyOrElse$6.apply(JobManager.scala:840)
+	at org.apache.flink.runtime.jobmanager.JobManager$$anonfun$handleMessage$1$$anonfun$applyOrElse$6.apply(JobManager.scala:840)
+	at scala.concurrent.impl.Future$PromiseCompletingRunnable.liftedTree1$1(Future.scala:24)
+	at scala.concurrent.impl.Future$PromiseCompletingRunnable.run(Future.scala:24)
+	at akka.dispatch.TaskInvocation.run(AbstractDispatcher.scala:39)
+	at akka.dispatch.ForkJoinExecutorConfigurator$AkkaForkJoinTask.exec(AbstractDispatcher.scala:415)
+	at scala.concurrent.forkjoin.ForkJoinTask.doExec(ForkJoinTask.java:260)
+	at scala.concurrent.forkjoin.ForkJoinPool$WorkQueue.runTask(ForkJoinPool.java:1339)
+	at scala.concurrent.forkjoin.ForkJoinPool.runWorker(ForkJoinPool.java:1979)
+	at scala.concurrent.forkjoin.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:107)
+Caused by: java.lang.Exception: An async function call terminated with an exception. Failing the AsyncWaitOperator.
+	at org.apache.flink.streaming.api.operators.async.Emitter.output(Emitter.java:137)
+	at org.apache.flink.streaming.api.operators.async.Emitter.run(Emitter.java:85)
+	at java.lang.Thread.run(Thread.java:748)
+Caused by: java.util.concurrent.ExecutionException: java.util.concurrent.TimeoutException: Async function call has timed out.
+	at java.util.concurrent.CompletableFuture.reportGet(CompletableFuture.java:357)
+	at java.util.concurrent.CompletableFuture.get(CompletableFuture.java:1895)
+	at org.apache.flink.streaming.api.operators.async.queue.StreamRecordQueueEntry.get(StreamRecordQueueEntry.java:68)
+	at org.apache.flink.streaming.api.operators.async.Emitter.output(Emitter.java:129)
+	... 2 more
+Caused by: java.util.concurrent.TimeoutException: Async function call has timed out.
+	at org.apache.flink.streaming.api.operators.async.AsyncWaitOperator$1.onProcessingTime(AsyncWaitOperator.java:212)
+	at org.apache.flink.streaming.runtime.tasks.SystemProcessingTimeService$TriggerTask.run(SystemProcessingTimeService.java:249)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$201(ScheduledThreadPoolExecutor.java:180)
+	at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:293)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	... 1 more

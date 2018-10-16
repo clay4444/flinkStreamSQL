@@ -64,8 +64,11 @@ public class SideSqlExec {
 
     private String localSqlPluginPath = null;
 
+    // 维度表parser
     private SideSQLParser sideSQLParser = new SideSQLParser();
 
+    // 维度表 执行程序
+    // tableCache 是source table cache，不包含维度表
     public void exec(String sql, Map<String, SideTableInfo> sideTableMap, StreamTableEnvironment tableEnv,
                      Map<String, Table> tableCache)
             throws Exception {
@@ -75,6 +78,8 @@ public class SideSqlExec {
         }
 
         Map<String, Table> localTableCache = Maps.newHashMap(tableCache);
+
+        //返回一个队列：第一个元素：joinInfo ，第二个元素：用户sql语句（SqlNode形式）
         Queue<Object> exeQueue = sideSQLParser.getExeQueue(sql, sideTableMap.keySet());
         Object pollObj = null;
 
@@ -83,6 +88,7 @@ public class SideSqlExec {
         List<FieldReplaceInfo> replaceInfoList = Lists.newArrayList();
 
         while((pollObj = exeQueue.poll()) != null){
+            // 每次取出一个元素来处理
 
             if(pollObj instanceof SqlNode){
                 SqlNode pollSqlNode = (SqlNode) pollObj;
@@ -104,7 +110,9 @@ public class SideSqlExec {
                 }
 
             }else if (pollObj instanceof JoinInfo){
-                preIsSideJoin = true;
+                // 处理join info
+
+                preIsSideJoin = true; //
                 JoinInfo joinInfo = (JoinInfo) pollObj;
 
                 JoinScope joinScope = new JoinScope();

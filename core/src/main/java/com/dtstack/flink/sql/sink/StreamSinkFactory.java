@@ -80,11 +80,12 @@ public class StreamSinkFactory {
 
         String pluginType = targetTableInfo.getType();  // mysql
 
-        //
+        //  ./plugins/mysqlsink
         String pluginJarDirPath = PluginUtil.getJarFileDirPath(String.format(DIR_NAME_FORMAT, pluginType), localSqlRootDir);
 
         PluginUtil.addPluginJar(pluginJarDirPath, dtClassLoader);
 
+        //com.dtstack.flink.sql.sink.mysql.MysqlSink
         String className = PluginUtil.getGenerClassName(pluginType, CURR_TYPE);
         Class<?> sinkClass = dtClassLoader.loadClass(className);
 
@@ -93,6 +94,8 @@ public class StreamSinkFactory {
         }
 
         IStreamSinkGener streamSinkGener = sinkClass.asSubclass(IStreamSinkGener.class).newInstance();
+
+        // 获取一种实现了 RetractStreamTableSink 的撤回流的 Table Sink
         Object result = streamSinkGener.genStreamSink(targetTableInfo);
         return (TableSink) result;
     }

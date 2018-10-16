@@ -55,7 +55,8 @@ import java.sql.SQLException;
 /**
  * OutputFormat to write tuples into a database.
  * The OutputFormat has to be configured using the supplied OutputFormatBuilder.
- * 
+ *
+ * 必须使用提供的OutputFormatBuilder配置OutputFormat
  * @see Tuple
  * @see DriverManager
  */
@@ -122,6 +123,7 @@ public class RetractJDBCOutputFormat extends RichOutputFormat<Tuple2> {
 	 * WARNING: this may fail when no column types specified (because a best effort approach is attempted in order to
 	 * insert a null value but it's not guaranteed that the JDBC driver handles PreparedStatement.setObject(pos, null))
 	 *
+     * 当没有指定列类型时，可能会失败
 	 * @param tuple2 The records to add to the output.
 	 * @see PreparedStatement
 	 * @throws IOException Thrown, if the records could not be added due to an I/O problem.
@@ -142,6 +144,7 @@ public class RetractJDBCOutputFormat extends RichOutputFormat<Tuple2> {
 				insertWrite(row);
 			}else{
 				//do nothing
+                // 撤回时，什么都不做
 			}
 		} catch (SQLException | IllegalArgumentException e) {
 			throw new IllegalArgumentException("writeRecord() failed", e);

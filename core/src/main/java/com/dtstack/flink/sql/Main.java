@@ -184,8 +184,9 @@ public class Main {
         //register table schema
         registerTable(sqlTree, env, tableEnv, localSqlPluginPath, remoteSqlPluginPath, sideTableMap, registerTableCache);
 
-        //
+        // 维度表执行器
         SideSqlExec sideSqlExec = new SideSqlExec();
+        // 设置插件路径
         sideSqlExec.setLocalSqlPluginPath(localSqlPluginPath);
 
         for (InsertSqlParser.SqlParseResult result : sqlTree.getExecSqlList()) {
@@ -204,6 +205,7 @@ public class Main {
 
             if(isSide){
                 //sql-dimensional table contains the dimension table of execution
+                // 如果包含维度表，就先执行维度表，registerTableCache 中只包含 source 表，
                 sideSqlExec.exec(result.getExecSql(), sideTableMap, tableEnv, registerTableCache);
             }else{
                 tableEnv.sqlUpdate(result.getExecSql());
@@ -216,11 +218,12 @@ public class Main {
             ((MyLocalStreamEnvironment) env).setClasspaths(urlList);
         }
 
-        env.execute(name);
+        env.execute(name);  // exec
     }
 
     /**
      * This part is just to add classpath for the jar when reading remote execution, and will not submit jar from a local
+     * 这部分只是为了在读取远程执行时添加jar的类路径，并且不会从本地提交jar
      * @param env
      * @param classPathSet
      * @throws NoSuchFieldException
@@ -330,8 +333,11 @@ public class Main {
             } else if (tableInfo instanceof TargetTableInfo) {
                 // Target Table 类型
 
+                // 获取一种实现了 RetractStreamTableSink 的撤回流的 Table Sink
                 TableSink tableSink = StreamSinkFactory.getTableSink((TargetTableInfo) tableInfo, localSqlPluginPath);
                 TypeInformation[] flinkTypes = FlinkUtil.transformTypes(tableInfo.getFieldClasses());
+
+                // env 中注册 table sink
                 tableEnv.registerTableSink(tableInfo.getName(), tableInfo.getFields(), flinkTypes, tableSink);
                 classPathSet.add( PluginUtil.getRemoteJarFilePath(tableInfo.getType(), TargetTableInfo.TARGET_SUFFIX, remoteSqlPluginPath));
             } else if(tableInfo instanceof SideTableInfo){

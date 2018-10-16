@@ -41,6 +41,10 @@ import java.util.List;
  * @author xuchao
  */
 
+/**
+ * 撤回流定制
+ * 实现了 RetractStreamTableSink 接口
+ */
 public abstract class DBSink implements RetractStreamTableSink<Row> {
 
     protected String driverName;
@@ -67,6 +71,10 @@ public abstract class DBSink implements RetractStreamTableSink<Row> {
 
     private int parallelism = -1;
 
+    /**
+     * 创建jdbc sink
+     * @return
+     */
     public RichSinkFunction createJdbcSinkFunc(){
 
         if(driverName == null || dbURL == null || userName == null
@@ -75,6 +83,7 @@ public abstract class DBSink implements RetractStreamTableSink<Row> {
                     " must not be null. please check it!!!");
         }
 
+        // output format
         RetractJDBCOutputFormat.JDBCOutputFormatBuilder jdbcFormatBuild = RetractJDBCOutputFormat.buildJDBCOutputFormat();
         jdbcFormatBuild.setDBUrl(dbURL);
         jdbcFormatBuild.setDrivername(driverName);
@@ -90,7 +99,8 @@ public abstract class DBSink implements RetractStreamTableSink<Row> {
     }
 
     /**
-     * By now specified class type conversion.
+     * 指定类型转换，
+     *
      * FIXME Follow-up has added a new type of time needs to be modified
      * @param fieldTypeArray
      */
@@ -122,6 +132,7 @@ public abstract class DBSink implements RetractStreamTableSink<Row> {
     }
 
     /**
+     * 设置默认的提交更新频率
      * Set the default frequency submit updated every submission
      * @param batchInterval
      */
@@ -129,6 +140,10 @@ public abstract class DBSink implements RetractStreamTableSink<Row> {
         this.batchInterval = batchInterval;
     }
 
+    /**
+     * 数据sink 时 真正要调用的方法；
+     * @param dataStream
+     */
     @Override
     public void emitDataStream(DataStream<Tuple2<Boolean, Row>> dataStream) {
         RichSinkFunction richSinkFunction = createJdbcSinkFunc();
@@ -166,6 +181,7 @@ public abstract class DBSink implements RetractStreamTableSink<Row> {
     }
 
 
+    // 设置并行度
     public void setParallelism(int parallelism){
         this.parallelism = parallelism;
     }
